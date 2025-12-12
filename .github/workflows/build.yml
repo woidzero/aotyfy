@@ -22,7 +22,7 @@ jobs:
 
       # 2️⃣ Install Bun
       - name: Install Bun
-        uses: oven-sh/bun@v0.8.3
+        uses: oven-sh/bun
         with:
           bun-version: 'latest'
 
