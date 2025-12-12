@@ -11,6 +11,7 @@ on:
 
 jobs:
   build:
+    name: build
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +23,7 @@ jobs:
 
       # 2️⃣ Install Bun
       - name: Install Bun
-        uses: oven-sh/bun
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: 'latest'
 
