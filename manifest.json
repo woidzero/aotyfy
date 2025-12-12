@@ -1,10 +1,13 @@
 [
   {
-    "name": "Better AlbumOfTheYear Scores",
-    "description": "Yet another Spicetify extension to display AOTY user ratings.",
-    "preview": "assets/example2.png",
-    "main": "aotyfy.js",
+    "name": "aotyfy",
+    "description": "🔹 Yet another Spicetify extension to display AOTY user ratings. ",
+    "preview": "assets/logo.png",
+    "main": "dist/aotyfy.js",
     "readme": "README.md",
-    "tags": ["aoty", "score", "albumoftheyear"]
+    "authors": [
+        { "name": "woidzero", "url": "https://github.com/woidzero" }
+    ],
+    "tags": ["albumoftheyear", "aoty", "rym", "score"]
   }
 ]
