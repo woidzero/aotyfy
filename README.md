@@ -17,7 +17,7 @@
 ### Installer (recommended)
 
 ```bash
-powershell -c "irm https://raw.githubusercontent.com/woidzero/aotyfy/refs/heads/main/install.bat | iex"
+powershell -c "irm https://raw.githubusercontent.com/woidzero/aotyfy/refs/heads/master/install.bat | iex"
 ```
 
 ### Manual
