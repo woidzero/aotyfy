@@ -4,8 +4,7 @@
 
 <h1>AOTYFY</h1>
 
-<p>Yet another [Spicetify](https://github.com/spicetify/spicetify-cli) extension to display AOTY user ratings.</p>
-
+<p>Yet another <a href="https://github.com/spicetify/spicetify-cli">Spicetify</a> extension to display AOTY user ratings.</p>
 
 <p align="center">
   <img alt="preview" src="./assets/example.png">
@@ -13,8 +12,13 @@
 
 </div>
 
+## Installation
 
-# Installation
+### Installer (recommended)
+
+```bash
+powershell -c "irm https://raw.githubusercontent.com/woidzero/aotyfy/refs/heads/main/install.bat | iex"
+```
 
 ### Manual
 
@@ -33,23 +37,15 @@ spicetify config extensions aotyfy.js
 spicetify apply
 ```
 
-## Installer
+### Install from Marketplace
 
-
-
-## Install from Marketplace
-
-You can install this extension from the Spicetify Marketplace, just search for "AOTYFY Scores" and click install.
-
-# FOSSA Status
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fx1yl%2FBetterSpicetifyAOTYScores.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fx1yl%2FBetterSpicetifyAOTYScores?ref=badge_large)
+You can install this extension from the Spicetify Marketplace, just search for "AOTYFY" and click install.
 
 ## Credits
 
-Forked from [Ashercs's Spicetify AOTY Scores](https://github.com/ashercs/SpicetifyAOTYScores).
+- [Ashercs's Spicetify AOTY Scores](https://github.com/ashercs/SpicetifyAOTYScores) - for idea and code base.
+- [x1yl Better Spicetify AOTY Scores](https://github.com/x1yl/BetterSpicetifyAOTYScores) - for rewritten Ashercs's code.
 
 ## License
 
 `aotyfy` is distributed under the terms of the [MIT License](LICENSE).
-
