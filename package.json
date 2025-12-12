@@ -1,0 +1,31 @@
+{
+  "name": "aotyfy",
+  "description": "Yet another Spicetify extension to display AOTY user ratings.",
+  "version": "1.0.0",
+  "author": "woidzero (https://github.com/woidzero)",
+  "scripts": {
+    "build": "bun run spicetify-creator",
+    "build-local": "bun run spicetify-creator --out=dist --minify",
+    "watch": "bun run spicetify-creator --watch",
+    "format": "bun run prettier --write ."
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "prettier": "^3.7.4",
+    "spicetify-creator": "^1.0.17",
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "@types/node": "^25.0.1",
+    "axios": "^1.13.2",
+    "cheerio": "^1.1.2"
+  },
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

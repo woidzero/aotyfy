@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Better AlbumOfTheYear Scores",
+    "description": "Yet another Spicetify extension to display AOTY user ratings.",
+    "preview": "assets/example2.png",
+    "main": "aotyfy.js",
+    "readme": "README.md",
+    "tags": ["aoty", "score", "albumoftheyear"]
+  }
+]
