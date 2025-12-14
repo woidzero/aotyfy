@@ -4,48 +4,41 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
   build:
     name: build
     runs-on: ubuntu-latest
-
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           persist-credentials: true
 
-      # 2️⃣ Install Bun
+      # Install Bun
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 'latest'
+          bun-version: "latest"
 
-      # 3️⃣ Install dependencies
+      # Install dependencies
       - name: Install Dependencies
-        run: bun install
+        run: bun install --no-save
 
-      # 4️⃣ Build extension
+      # Build extension
       - name: Build Extension
         run: bun run build-local
 
-      # 5️⃣ Commit and push dist folder if changed
+      # Commit and push dist folder if changed
       - name: Commit dist folder
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add dist
-          if ! git diff-index --quiet HEAD; then
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit."
+          else
             git commit -m "chore: update built dist via Bun"
             git push origin HEAD
-          else
-            echo "No changes to commit."
           fi
-          git diff-index --quiet HEAD || git commit -m "chore: update built dist via Bun"
-          git push origin HEAD
