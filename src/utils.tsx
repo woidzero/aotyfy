@@ -28,6 +28,35 @@ function waitForElement(selector: any) {
   });
 }
 
+// helper function to set the appearance of the album/tracks score element
+// Depending on the score of a song the color will change.
+// If the score is above 69.5 it is green.
+// If the score is above 49.5 but below 69.5 it is yellow.
+// If the score is below 49.5 it is red.
+function setAppearance(score: number, element: any) {
+  if (!Number(score)) {
+    element.style.color = "var(--text-subdued)";
+    return;
+  }
+  switch (true) {
+    default:
+      element.style.color = "var(--text-subdued)";
+      break;
+
+    case score >= 69.5:
+      element.style.color = "#85ce73";
+      break;
+
+    case score >= 49.5 && score < 69.5:
+      element.style.color = "#f0e68c";
+      break;
+
+    case score < 49.5:
+      element.style.color = "#d76666";
+      break;
+  }
+}
+
 function editDistance(s1: any, s2: any) {
   s1 = s1.toLowerCase();
   s2 = s2.toLowerCase();
@@ -127,6 +156,7 @@ class ApiError extends Error {
 export {
   fetch,
   waitForElement,
+  setAppearance,
   editDistance,
   similarity,
   isNumeric,

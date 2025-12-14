@@ -7,14 +7,23 @@
 
 // Import module for parsing HTML
 import * as cheerio from "cheerio";
-import { fetch, waitForElement, similarity, isNumeric, countInstances, getLocalStorageDataFromKey, ApiError } from "./utils";
+import {
+  fetch,
+  waitForElement,
+  similarity,
+  isNumeric,
+  countInstances,
+  getLocalStorageDataFromKey,
+  ApiError,
+  setAppearance,
+} from "./utils";
 
 // Setup.
 const { Player } = Spicetify;
 
 let prevTrack: string;
 let prevRequest: number = 0;
-let isRefreshing = "False";
+let isRefreshing: boolean = false;
 
 // Button cooldown is set to 5 seconds just to avoid hitting the rate limit.
 const RATE_LIMIT = 5000;
@@ -56,30 +65,24 @@ const Settings = {
 
 // Clearing the displayed ratings.
 function clearRating() {
-  if (infoContainer && ratingContainer) {
-    console.debug("clearing");
-    try {
-      if (songTitleBox) {
-        const songScore = document.querySelectorAll(".songScore");
-        songScore.forEach((element) => element.remove());
+  if (!infoContainer || !ratingContainer) return;
+
+  console.debug("[AOTYfy] Clearing ratings ...");
+
+  try {
+    // Clear song scores and reset title styling
+    if (songTitleBox) {
+      document.querySelectorAll(".songScore").forEach((el) => el.remove());
+
+      if (songTitleBox.children.length) {
         songTitleBox.children[0].style.fontWeight = 400;
       }
-
-      const scoreElements = document.querySelectorAll(".scoreElement");
-      scoreElements.forEach((element) => element.remove());
-
-      // Fix for duplicate scores.
-      for (let i = 0; i < document.getElementsByClassName("scoreElement").length; i++) {
-        document.getElementsByClassName("scoreElement")[i].remove();
-      }
-      if (document.getElementsByClassName("songScore")[0]) {
-        for (let i = 0; i < document.getElementsByClassName("songScore").length; i++) {
-          document.getElementsByClassName("songScore")[i].remove();
-        }
-      }
-    } catch (e) {
-      console.debug("Error clearing ratings: " + e);
     }
+
+    // Clear general score elements
+    document.querySelectorAll(".scoreElement").forEach((el) => el.remove());
+  } catch (e) {
+    console.error("[AOTYfy] Error clearing ratings:", e);
   }
 }
 
@@ -91,10 +94,10 @@ async function getPageLink(
   type?: string | undefined,
   skip_simcheck: boolean = false,
 ): any[] | undefined {
-  let song = artist + " " + album;
+  let song: string = artist + " " + album;
 
-  // This was changed to just AOTY's search due to duckduckgo being quite inaccurate.
-  let url = "https://www.albumoftheyear.orgundefined";
+  // base url
+  let url: string = "https://www.albumoftheyear.orgundefined";
 
   // Changed so if it already tried searching for a release but couldn't find one it will
   // just search the album name and get the most similar one.
@@ -104,7 +107,7 @@ async function getPageLink(
     url = `https://www.albumoftheyear.org/search/albums/?q=${encodeURIComponent(album)}`;
   }
 
-  console.debug(url);
+  console.debug(`[AOTYfy] Fetching URL: \n${url}`);
 
   const res = await fetch(url);
   console.debug(`[AOTYfy] Fetched response: \n${res}`);
@@ -148,7 +151,7 @@ async function getPageLink(
       const _albumTitle = _albumBlock.find(".albumTitle").text().trim() || "";
       const _artistName = _albumBlock.find(".artistTitle").text().trim() || "";
       const _meta = _albumBlock.find(".type").text().trim().toLowerCase() || "";
-      const _url = _albumBlock.find("a:has(.albumTitle)").attr("href") || "";
+      const _url = _albumBlock.find("a:has(.albumTitle)").attr("href") || "undefined";
 
       const [_yearStr, _typeStr] = _meta.split(" • ");
       const _year = parseInt(_yearStr, 10) || 0;
@@ -166,7 +169,7 @@ async function getPageLink(
   console.debug(`[AOTYfy] Collected ${Releases.length} releases:`);
   console.table(Releases);
 
-  // skip checking similarity (in some cases pretty useful)
+  // skip checking similarity (in some cases really useful)
   if (skip_simcheck) {
     aotyUrl = Releases[0].url;
   } else {
@@ -357,7 +360,7 @@ async function getPageLink(
     // [improved error handling]
     switch (res.status) {
       case 500:
-        if (Settings.isNotifications) Spicetify.showNotification(`[AOTYfy] AOTY or proxy is down.`, true);
+        if (Settings.isNotifications) Spicetify.showNotification(`[AOTYfy] AOTY or Proxy is down.`, true);
         return;
       case 200:
       case 530:
@@ -379,7 +382,7 @@ async function getPageLink(
   }
 
   // Seeing the number of ratings an album has via CSS selector.
-  let ratingcount = $(
+  let ratingCount: string = $(
     "#centerContent > div.fullWidth > div:nth-child(4) > div.albumUserScoreBox > div.text.numReviews > a > strong",
   ).text()!;
 
@@ -402,9 +405,11 @@ async function getPageLink(
   let tracklistcount;
   let longestdisc = 0;
   let testing;
+
   if (isNumeric(checkIfTrackRatings) == true) {
     // Set hasRatings to true because a tracklist has ratings
     hasRatings = "True";
+
     let h = 1;
     let numofdiscs = $(".discNumber");
 
@@ -417,6 +422,7 @@ async function getPageLink(
         tracklistcount = $(testing).children("tbody").children("tr").length;
         arr.push(tracklistcount);
       }
+
       longestdisc = arr.reduce((a, b) => Math.max(a, b), -Infinity);
     }
 
@@ -529,7 +535,7 @@ async function getPageLink(
   }
 
   // Removing the comma from the rating count to later check if this equals 0 or not.
-  let ratingcountint = ratingcount.replace(",", "");
+  let ratingcountint = ratingCount.replace(",", "");
 
   // Getting and rounding score to 2 decimals.
   let score = $("#centerContent > div.fullWidth > div:nth-child(4) > div.albumUserScoreBox > div.albumUserScore > a").attr(
@@ -540,7 +546,7 @@ async function getPageLink(
   let roundedscore = parseFloat(finalintscore);
 
   // Returning all data obtained.
-  return [roundedscore, ratingcount, aotyUrl, ratingcountint, JSONTrackRatings, hasRatings, JSONSongUrls, JSONRatingCount];
+  return [roundedscore, ratingCount, aotyUrl, ratingcountint, JSONTrackRatings, hasRatings, JSONSongUrls, JSONRatingCount];
 }
 
 // Function that the refresh button runs.
@@ -559,14 +565,15 @@ async function refreshRequest() {
   }
 
   // Fix to make it not spam.
-  isRefreshing = "True";
+  isRefreshing = true;
 
   // Start the 5 second count.
   prevRequest = Date.now();
 
-  // Run the main script.
   console.log("[AOTYfy] Refreshing scores ...");
+  // Run the main script.
   update();
+  if (Settings.isNotifications) Spicetify.showNotification(`[AOTYfy] Scores refreshed.`);
 }
 
 async function update() {
@@ -585,8 +592,8 @@ async function update() {
   console.debug(`[AOTYfy] Player id: ${id}`);
 
   // Fix to make it not spam #2.
-  if (id == prevTrack && isRefreshing == "False") return;
-  isRefreshing = "False";
+  if (id == prevTrack && isRefreshing == false) return;
+  isRefreshing = false;
 
   // Check #2 if there is a track playing, infoContainer is also used later to add the album rating text.
   // Also fix for extension not working if friends tab is closed.
@@ -629,43 +636,41 @@ async function update() {
   try {
     console.debug("[AOTYfy] Now Playing:");
     console.table({ title, album_title, artist_name });
+
+    /*
+    SPECIFIC FIXES
+    specific fixes for artists/albums/songs.
+    feel free to contibute on github if you spotted some of these.
+    */
     // Removing any deluxes or remasters from album titles.
     // Made it so it would not remove the () for Weezer due to a request since almost all of
     // Weezer's albums are just named Weezer followed by (insertcolorhere album)
     // ( now a list of artists that are ignored for this )
-    const IGNORE_SYMBOL_REPLACING_ARTISTS = ["Weezer", "SOPHIE"];
+    const IGNORE_SYMBOL_REPLACING_ARTISTS = ["Weezer", "SOPHIE", "Crystal Castles"];
 
     if (!IGNORE_SYMBOL_REPLACING_ARTISTS.includes(artist_name)) {
+      console.log(`Artist ${artist_name} is not in the ignore list.`);
       album_title = album_title.split(" -")[0];
       album_title = album_title.split(" (")[0];
       album_title = album_title.replace('"', "");
     }
-
     if (album_title == "Teen Week" && artist_name == "Jane Remover") {
       album_title = "Teen Week [Abridged]";
     }
-
     // set release_type for SOPHIE ep
     if (album_title == "SOPHIE (EP)") {
       album_title = "SOPHIE";
       release_type = "ep";
       skip_simcheck = true;
     }
-
-    /* SPECIFIC FIXES
-    specific fixes for artists/albums/songs.
-    feel free to contibute on github if you spotted some of these.
-    */
     // album is named "Wish You Well / Album" on Spotify but just "Wish You Well" on AOTY
     if (artist_name == "Invariance" && album_title == "Wish You Well / Album") {
       album_title = album_title.replace(" / Album", "");
     }
-
     // search for "ATIVAN COREA" with that album title returns no results (AOTY bug)
     if (artist_name == "ATIVAN COREA" && album_title.startsWith("[][][][][][][][][][][][][[][][][][][][[][[[][]][[][]")) {
       artist_name = "YAYAYI";
     }
-
     // other names
     switch (artist_name) {
       case "Ms. Lauryn Hill":
@@ -769,7 +774,6 @@ async function update() {
         songRating.title = ratingTitle;
 
         // songTitle = songTitleBox.children[0];
-
         // if (songScore >= 90 && ratingTitle.split("Ratings")[0] >= 25) {
         //   songTitle.style.fontWeight = "bold";
         // }
@@ -782,35 +786,6 @@ async function update() {
         }
         // Adding this element to the same area the track title is.
         songTitleBox.appendChild(songRating);
-      }
-    }
-
-    // helper function to set the appearance of the album/tracks score element
-    // Depending on the score of a song the color will change.
-    // If the score is above 69.5 it is green.
-    // If the score is above 49.5 but below 69.5 it is yellow.
-    // If the score is below 49.5 it is red.
-    function setAppearance(score, element) {
-      if (!Number(score)) {
-        element.style.color = "var(--text-subdued)";
-        return;
-      }
-      switch (true) {
-        default:
-          element.style.color = "var(--text-subdued)";
-          break;
-
-        case score >= 69.5:
-          element.style.color = "#85ce73";
-          break;
-
-        case score >= 49.5 && score < 69.5:
-          element.style.color = "#f0e68c";
-          break;
-
-        case score < 49.5:
-          element.style.color = "#d76666";
-          break;
       }
     }
 
@@ -853,7 +828,6 @@ async function update() {
     infoContainer.style.gridTemplate =
       '"title title" "badges subtitle" "rating rating" "quality quality" "genres genres" / auto 1fr auto auto';
     infoContainer.appendChild(divContainer);
-    if (Settings.isNotifications) Spicetify.showNotification(`[AOTYfy] Scores refreshed.`);
   } catch (e: any) {
     // Checking for errors.
     if (e instanceof ApiError) {
