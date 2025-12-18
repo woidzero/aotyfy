@@ -1,13 +1,13 @@
 <div align=center>
 
-<img src="./src/assets/logo.svg" width=100 height=100 />
+<img src="./assets/logo.svg" width=100 height=100 />
 
 <h1>AOTYFY</h1>
 
 <p>Yet another <a href="https://github.com/spicetify/spicetify-cli">Spicetify</a> extension to display AOTY user ratings.</p>
 
 <p align="center">
-  <img alt="preview" src="./src/assets/example.png">
+  <img alt="preview" src="./assets/example.png">
 </p>
 
 </div>
