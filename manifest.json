@@ -2,12 +2,10 @@
   {
     "name": "AOTYFY",
     "description": "🔹 Yet another Spicetify extension to display AOTY user ratings. ",
-    "preview": "assets/logo.png",
+    "preview": "src/assets/logo.png",
     "main": "dist/aotyfy.js",
     "readme": "README.md",
-    "authors": [
-        { "name": "woidzero", "url": "https://github.com/woidzero" }
-    ],
+    "authors": [{ "name": "woidzero", "url": "https://github.com/woidzero" }],
     "tags": ["albumoftheyear", "aoty", "rym", "score", "rateyourmusic"]
   }
 ]

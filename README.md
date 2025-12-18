@@ -1,13 +1,13 @@
 <div align=center>
 
-<img src="./assets/logo.svg" width=100 height=100 />
+<img src="./src/assets/logo.svg" width=100 height=100 />
 
 <h1>AOTYFY</h1>
 
 <p>Yet another <a href="https://github.com/spicetify/spicetify-cli">Spicetify</a> extension to display AOTY user ratings.</p>
 
 <p align="center">
-  <img alt="preview" src="./assets/example.png">
+  <img alt="preview" src="./src/assets/example.png">
 </p>
 
 </div>
@@ -22,14 +22,14 @@ powershell -c "irm https://raw.githubusercontent.com/woidzero/aotyfy/refs/heads/
 
 ### Manual
 
-1. Download [aotyfy.js](./aotyfy.js) and place it inside your Spicetify extensions folder:
+1. Download [aotyfy.js](./dist/aotyfy.js) and place it inside your Spicetify extensions folder:
 2. Open Spicetify extensions directory:
 
 ```bash
 spicetify config-dir
 ```
 
-3. Put [aotyfy.js](./aotyfy.js) in the 'Extensions' folder.
+3. Put [aotyfy.js](./dist/aotyfy.js) in the 'Extensions' folder.
 4. Apply the changes:
 
 ```

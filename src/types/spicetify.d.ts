@@ -27,6 +27,7 @@ declare namespace Spicetify {
     referrer?: string;
   };
   type PlayerState = {
+    [x: string]: any;
     timestamp: number;
     context_uri: string;
     context_url: string;
