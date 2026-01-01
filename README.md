@@ -1,14 +1,12 @@
 <div align=center>
 
-<img src="./assets/logo.svg" width=100 height=100 />
+<img src="./assets/logo.png" width=100 height=100 />
 
 <h1>AOTYFY</h1>
 
-<p>Yet another <a href="https://github.com/spicetify/spicetify-cli">Spicetify</a> extension to display AOTY user ratings.</p>
+<p>🔹 Album of the Year user & critic ratings for Spotify.</p>
 
-<p align="center">
-  <img alt="preview" src="./assets/example.png">
-</p>
+<img alt="preview" src="./assets/preview.png">
 
 </div>
 
@@ -43,8 +41,7 @@ You can install this extension from the Spicetify Marketplace, just search for "
 
 ## Credits
 
-- [Ashercs's Spicetify AOTY Scores](https://github.com/ashercs/SpicetifyAOTYScores) - for idea and code base.
-- [x1yl Better Spicetify AOTY Scores](https://github.com/x1yl/BetterSpicetifyAOTYScores) - for rewritten Ashercs's code.
+- [x1yl Better Spicetify AOTY Scores](https://github.com/x1yl/BetterSpicetifyAOTYScores) - for rewritten Ashercs's codebase.
 
 ## License
 

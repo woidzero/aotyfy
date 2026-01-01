@@ -8,16 +8,12 @@ marked.setOptions({
 });
 
 function addLineBreaks(html) {
-  return (
-    html
-      // Add <br /> after all h2 and h3
-      .replace("<h1>Changelog</h1>", "")
-      .replace(/<\/h2>/g, "</h2><br />")
-      .replace(/<\/h3>/g, "</h3><br />")
-      .replace(/<\/ul>/g, "</ul><br />")
-      // Add <br /> after the specific paragraph
-      .replace(/(<p>The format is based[\s\S]*?<\/p>)/, "$1<br />")
-  );
+  return html
+    .replace("<h1>Changelog</h1>", "")
+    .replace(/<\/h2>/g, "</h2><br />")
+    .replace(/<\/h3>/g, "</h3><br />")
+    .replace(/<\/ul>/g, "</ul><br />")
+    .replace(/(<p>The format is based[\s\S]*?<\/p>)/, "$1<br />");
 }
 
 const changelog = addLineBreaks(marked.parse(readFileSync("./CHANGELOG.md", "utf-8")));
@@ -30,7 +26,6 @@ export const __CHANGELOG__ = \`${changelog}\`;
 
 const outputPath = "./src/generated/meta.ts";
 
-// Check if directory exists, create if not
 const dir = dirname(outputPath);
 if (!existsSync(dir)) {
   mkdirSync(dir, { recursive: true });
