@@ -47,7 +47,7 @@ export interface _Meta {
 export interface _Track {
   id: number;
   title: string;
-  artist: string;
+  artist: string[];
   score: number;
   ratings: number;
   discNumber: number;
