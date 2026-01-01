@@ -1,7 +1,7 @@
 {
   "name": "aotyfy",
   "description": "🔹 Album of the Year user & critic ratings for Spotify.",
-  "version": "2.1.0",
+  "version": "2.0.1",
   "author": "woidzero",
   "private": true,
   "license": "MIT",

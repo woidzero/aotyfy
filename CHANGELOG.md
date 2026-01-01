@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.1] - 2026-01-02
+
+### Changed
+
+- Logo, icon and description
+- Suffix " / Album" is now removed from album names in all cases
+
+### Fixed
+
+- Tapir!'s debut album was searched incorrectly
+- Song features appears in the song title in NPV widget
+- Fixed border radius and artist appearance in NPV widget
+
 ## [2.0.0] - 2025-12-17
 
 ### Added
