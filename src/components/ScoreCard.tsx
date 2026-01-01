@@ -1,4 +1,3 @@
-// oxlint-disable no-unused-vars
 const { React } = Spicetify;
 
 import { _ScoreBox, _ScoreCard } from "../types/global";

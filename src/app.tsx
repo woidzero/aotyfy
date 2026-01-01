@@ -1,4 +1,3 @@
-// oxlint-disable no-unused-vars
 import { __VERSION__, __CHANGELOG__ } from "./generated/meta";
 
 import type { _Album, _ScoreBox, _TrackItem, _Track, ReleaseObject, _Meta } from "./types/global";
@@ -242,7 +241,9 @@ async function getAPI(
   const $ = cheerio.load(res2);
 
   // album artist
-  const albumArtist = $(`.albumHeadline .artist a`).text();
+  const albumArtist = $(".albumHeadline .artist a")
+    .map((_, el) => $(el).text().trim())
+    .get();
 
   // album rating count
   let userRatingsCount: any = $(`div.albumUserScoreBox > .numReviews > a > strong`).text() || "-1";
@@ -284,8 +285,13 @@ async function getAPI(
         const trackNumber = trackIndex + 1;
 
         // get track url element
-        const URLElement = $(trackListTable).find(`tr:nth-child(${trackNumber}) td.trackTitle a`);
+        const URLElement = $(trackListTable).find(`tr:nth-child(${trackNumber}) td.trackTitle a:first`);
         const trackTitle = URLElement.text();
+
+        const featuredArtists = $(trackListTable)
+          .find(`tr:nth-child(${trackNumber}) td.trackTitle .featuredArtists a`)
+          .map((_, el) => $(el).text().trim())
+          .get();
 
         const href = URLElement.attr("href");
         const trackURL = href ? `https://www.albumoftheyear.org${href}` : "https://www.albumoftheyear.org/song/undefined";
@@ -301,11 +307,13 @@ async function getAPI(
         const ratingMatch = ratingCountText.match(/\d+/);
         const ratings = ratingMatch ? parseInt(ratingMatch[0], 10) : -1;
 
+        const artists = [...albumArtist, ...featuredArtists];
+
         // create track object
         const Track: _Track = {
           id: trackId++,
           title: trackTitle,
-          artist: albumArtist,
+          artist: artists,
           score: isNaN(score) ? -1 : score,
           ratings: isNaN(ratings) ? -1 : ratings,
           discNumber: discIndex,
@@ -482,22 +490,26 @@ async function update() {
     }
 
     // specific album fixes
-    if (Meta.album.title === "Teen Week" && Meta.artist.name === "Jane Remover") {
+    if (Meta.artist.name === "Jane Remover" && Meta.album.title === "Teen Week") {
       Meta.album.title = "Teen Week [Abridged]";
     }
 
-    if (Meta.album.title === "SOPHIE (EP)") {
+    if (Meta.artist.name === "SOPHIE" && Meta.album.title === "SOPHIE (EP)") {
       Meta.album.title = "SOPHIE";
       releaseType = "ep";
       skipSimcheck = true;
     }
 
-    if (Meta.artist.name === "Invariance" && Meta.album.title === "Wish You Well / Album") {
-      Meta.artist.name = Meta.album.title.replace(" / Album", "");
+    if (Meta.album.title.endsWith(" / Album")) {
+      Meta.album.title = Meta.album.title.replace(" / Album", "");
     }
 
     if (Meta.artist.name === "ATIVAN COREA" && Meta.album.title.startsWith("[][][][][][][][]")) {
       Meta.artist.name = "YAYAYI";
+    }
+
+    if (Meta.artist.name === "Tapir!" && Meta.album.title === "The Pilgrim, Their God and The King of My Decrepit Mountain") {
+      Meta.album.title = "The Pilgrim, Their God & The King Of My Decrepit Mountain";
     }
 
     switch (Meta.artist.name) {
@@ -537,16 +549,13 @@ async function update() {
       const discIndex = Number(Meta.album.disc.number) - 1;
       const trackIndex = Number(Meta.album.track.number) - 1;
 
-      Track = Album.tracks?.find((t) => {
-        // try multi-disc id only if not on first disc
-        if (discIndex !== 0 && t.id === discIndex * 100 + trackIndex) return true;
+      const discs = Album.tracks?.reduce<Record<number, typeof Album.tracks>>((acc, t: _Track) => {
+        (acc[t.discNumber] ??= []).push(t);
+        return acc;
+      }, {});
 
-        // try track index
-        if (t.id === trackIndex) return true;
-
-        // fallback to title match
-        return t.title.toLowerCase() === Meta.track.title.toLowerCase();
-      });
+      Track =
+        discs?.[discIndex]?.[trackIndex] ?? Album.tracks?.find((t) => t.title.toLowerCase() === Meta.track.title.toLowerCase());
 
       if (songTitleBox) {
         if (Track) {
@@ -579,7 +588,7 @@ async function update() {
     if (Settings.showInSidebar) {
       waitForElement(".main-nowPlayingView-nowPlayingWidget")
         .then(async (el) => {
-          let NPWidget = el as HTMLElement;
+          let NPWidget: HTMLElement = el as HTMLElement;
 
           if (!scoreCardContainer || !document.body.contains(scoreCardContainer)) {
             scoreCardContainer = document.createElement("div");

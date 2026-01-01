@@ -15,6 +15,7 @@ export const TrackItem = ({ meta, track }: _TrackItem) => (
       alignItems: "center",
       padding: "15px",
       gap: "15px",
+      borderRadius: "8px",
     }}
   >
     <div
@@ -34,6 +35,7 @@ export const TrackItem = ({ meta, track }: _TrackItem) => (
     </div>
     <div
       className="aotyfy-SongItem-details"
+      onClick={() => window.open(track.url, "_blank", "noopener,noreferrer")}
       style={{
         width: "100%",
         display: "flex",
@@ -61,12 +63,12 @@ export const TrackItem = ({ meta, track }: _TrackItem) => (
         id="artist"
         style={{
           width: "100%",
-          fontWeight: "bold",
+          fontWeight: "normal",
           textOverflow: "ellipsis",
           overflow: "hidden",
         }}
       >
-        {track.artist}
+        {track.artist.join(", ")}
       </span>
     </div>
     <div
@@ -88,7 +90,7 @@ export const TrackItem = ({ meta, track }: _TrackItem) => (
         <a
           id="score"
           style={{
-            color: setAppearance(track.score),
+            color: setAppearance(track.score) as string,
             cursor: "pointer",
             textAlign: "center",
             display: "flex",
@@ -115,7 +117,7 @@ export const TrackItem = ({ meta, track }: _TrackItem) => (
               position: "absolute",
               width: track.score + "%",
               height: "4px",
-              backgroundColor: setAppearance(track.score),
+              backgroundColor: setAppearance(track.score) as string,
               left: "0",
             }}
           ></span>

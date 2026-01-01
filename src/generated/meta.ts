@@ -1,6 +1,18 @@
 // auto-generated - DO NOT EDIT
-export const __VERSION__ = '2.0.0';
+export const __VERSION__ = "2.0.1";
 export const __CHANGELOG__ = `
+<h2>[2.0.1] - 2026-01-02</h2><br />
+<h3>Changed</h3><br />
+<ul>
+<li>Logo, icon and description</li>
+<li>Suffix &quot; / Album&quot; is now removed from album names in all cases</li>
+</ul><br />
+<h3>Fixed</h3><br />
+<ul>
+<li>Tapir!&#39;s debut album was searched incorrectly</li>
+<li>Song features appears in the song title in NPV widget</li>
+<li>Fixed border radius and artist appearance in NPV widget</li>
+</ul><br />
 <h2>[2.0.0] - 2025-12-17</h2><br />
 <h3>Added</h3><br />
 <ul>
