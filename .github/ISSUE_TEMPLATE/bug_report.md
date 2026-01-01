@@ -8,7 +8,7 @@ assignees: woidzero
 
 ## Before submitting a bug report
 
-- [ ] I have checked the bug is only appears while using Stylizer.
+- [ ] I have checked the bug is only appears while using AOTYFY.
 
 - [ ] I have changed the title from [BUG] CHANGE TITLE BEFORE REPORTING.
 
