@@ -1,6 +1,12 @@
 // auto-generated - DO NOT EDIT
-export const __VERSION__ = "2.0.1";
+export const __VERSION__ = '2.0.2';
 export const __CHANGELOG__ = `
+<h2>[2.0.2] - 2026-01-06</h2><br />
+<h3>Fixed</h3><br />
+<ul>
+<li>M.I.A. - ΛΛ Λ Y Λ searched incorrectly</li>
+<li>galen tipton/dj galen searched incorrectly</li>
+</ul><br />
 <h2>[2.0.1] - 2026-01-02</h2><br />
 <h3>Changed</h3><br />
 <ul>

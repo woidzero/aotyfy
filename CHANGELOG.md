@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2] - 2026-01-06
+
+### Fixed
+
+- M.I.A. - ΛΛ Λ Y Λ searched incorrectly
+- galen tipton/dj galen searched incorrectly
+
 ## [2.0.1] - 2026-01-02
 
 ### Changed

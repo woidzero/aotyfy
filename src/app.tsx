@@ -512,6 +512,14 @@ async function update() {
       Meta.album.title = "The Pilgrim, Their God & The King Of My Decrepit Mountain";
     }
 
+    if (Meta.artist.name === "M.I.A." && Meta.album.title.startsWith('/\\/\\ /\\ Y /\\')) {
+      Meta.album.title = "ΛΛ Λ Y Λ";
+    }
+
+    if (Meta.artist.name === "dj galen") {
+      Meta.artist.name = "galen tipton";
+    }
+
     switch (Meta.artist.name) {
       case "Ms. Lauryn Hill":
         Meta.artist.name = "Lauryn Hill";
