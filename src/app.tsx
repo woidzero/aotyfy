@@ -520,6 +520,10 @@ async function update() {
       Meta.artist.name = "galen tipton";
     }
 
+    if (Meta.artist.name === "Car Seat Headrest" && Meta.album.title === "Twin Fantasy") {
+      Meta.album.title = "Twin Fantasy (Face to Face)";
+    }
+
     switch (Meta.artist.name) {
       case "Ms. Lauryn Hill":
         Meta.artist.name = "Lauryn Hill";
