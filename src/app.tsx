@@ -75,7 +75,7 @@ function clearRating() {
 }
 
 /**
- * fetches AOTY page URL and parses album/track API
+ * refreshing
  */
 async function refreshRequest() {
   const now = Date.now();
@@ -84,8 +84,7 @@ async function refreshRequest() {
   if (now - prevRequest < RATE_LIMIT) {
     if (Settings.isNotifications) {
       Spicetify.showNotification(
-        `[AOTYfy] You are on cooldown. Please wait ${
-          (RATE_LIMIT - (now - prevRequest)) / 1000
+        `[AOTYfy] You are on cooldown. Please wait ${(RATE_LIMIT - (now - prevRequest)) / 1000
         } seconds to avoid hitting the rate limit.`,
       );
     }
@@ -108,7 +107,7 @@ async function getAPI(
   firstIteration: boolean,
   type?: string | undefined,
   skipSimcheck: boolean = false,
-): Promise<_Album | any> {
+): Promise<_Album> {
   // build search url
   const url = firstIteration
     ? `https://www.albumoftheyear.org/search/albums/?q=${encodeURIComponent(meta.artist.name + " " + meta.album.title)}`
@@ -163,7 +162,7 @@ async function getAPI(
     console.debug(`[AOTYfy] Multiple results (${releases.length}) found.`);
 
     const albumLower = meta.album.title.toLowerCase();
-    const artistLower = meta.album.title.toLowerCase();
+    const artistLower = meta.artist.name.toLowerCase();
 
     // check if first result is exact match (most common case)
     if (releases[0].title.toLowerCase() === albumLower) {
@@ -480,7 +479,6 @@ async function update() {
      * feel free to contribute on github if you spot more of these.
      */
 
-    // remove deluxe/remaster suffixes from album titles (with exceptions)
     const IGNORE_ARTISTS = ["Weezer", "SOPHIE", "Crystal Castles"];
 
     if (!IGNORE_ARTISTS.includes(Meta.artist.name)) {
@@ -489,7 +487,6 @@ async function update() {
       Meta.album.title = Meta.album.title.replace('"', "");
     }
 
-    // specific album fixes
     if (Meta.artist.name === "Jane Remover" && Meta.album.title === "Teen Week") {
       Meta.album.title = "Teen Week [Abridged]";
     }
@@ -524,6 +521,10 @@ async function update() {
       Meta.album.title = "Twin Fantasy (Face to Face)";
     }
 
+    if (Meta.artist.name === "David Bowie" && Meta.album.title === "Blackstar") {
+      releaseType = "lp"
+    }
+
     switch (Meta.artist.name) {
       case "Ms. Lauryn Hill":
         Meta.artist.name = "Lauryn Hill";
@@ -534,17 +535,17 @@ async function update() {
     }
 
     // fetch AOTY data
-    let Album: _Album = await getAPI(Meta, firstIteration, releaseType, skipSimcheck);
+    const Album: _Album = await getAPI(Meta, firstIteration, releaseType, skipSimcheck);
     let Track: _Track | undefined;
-
-    // remove any duplicate rating elements
-    ["aotyfy-AlbumRating", "aotyfy-TrackRating"].forEach((className) => {
-      const elements = document.getElementsByClassName(className);
-      Array.from(elements).forEach((element) => element.remove());
-    });
 
     // add track ratings if available
     if (Album.verified && Album.tracks) {
+      // remove any duplicate rating elements
+      ["aotyfy-AlbumRating", "aotyfy-TrackRating"].forEach((className) => {
+        const elements = document.getElementsByClassName(className);
+        Array.from(elements).forEach((element) => element.remove());
+      });
+
       // find song title element (try multiple selectors for compatibility)
       const songTitleSelectors = [
         "#main > div > div.Root__top-container.Root__top-container--right-sidebar-visible > div.Root__now-playing-bar > footer > div > div.main-nowPlayingBar-left > div > div.main-nowPlayingWidget-trackInfo.main-trackInfo-container > div.main-trackInfo-name > div > span > span > div > span",
@@ -569,94 +570,94 @@ async function update() {
       Track =
         discs?.[discIndex]?.[trackIndex] ?? Album.tracks?.find((t) => t.title.toLowerCase() === Meta.track.title.toLowerCase());
 
-      if (songTitleBox) {
-        if (Track) {
-          const trackElement = document.createElement("a");
-          trackElement.className = "aotyfy-TrackRating";
-          setAppearance(Track.score, trackElement);
+      // render score card in Now Playing view
+      if (Settings.showInSidebar) {
+        waitForElement(".main-nowPlayingView-nowPlayingWidget")
+          .then(async (el) => {
+            let NPWidget: HTMLElement = el as HTMLElement;
 
-          trackElement.style.fontSize = "10px";
-          trackElement.style.fontWeight = "bold";
-          trackElement.style.paddingLeft = "5px";
+            if (!scoreCardContainer || !document.body.contains(scoreCardContainer)) {
+              scoreCardContainer = document.createElement("div");
+              NPWidget.insertAdjacentElement("afterend", scoreCardContainer);
+            }
 
-          if (Track.score !== -1) {
-            trackElement.title = `${Track.ratings} ratings`;
-            trackElement.innerText = `[${Track.score.toFixed(0)}]`;
-            trackElement.href = Track.url;
+            const ScoreItem = (data: { score: number; ratings: number }) => ({
+              score: data.score,
+              ratings: data.ratings,
+              url: Album.url,
+            });
 
-            songTitleBox.appendChild(trackElement);
+            ReactDOM.render(
+              <ScoreCard
+                critic={ScoreItem(Album.ratings.critic)}
+                user={ScoreItem(Album.ratings.user)}
+                album={Album}
+                track={Track}
+                meta={Meta}
+              />,
+              scoreCardContainer,
+            );
+          })
+          .catch((e: Error) => {
+            throw new AOTYError("[AOTYfy] Failed to find NPV Widget:\n" + e.message);
+          });
+      }
+
+      // create score elements in Now Playing bar
+      if (Settings.showInNowPlaying) {
+        if (songTitleBox) {
+          if (Track) {
+            const trackElement = document.createElement("a");
+            trackElement.className = "aotyfy-TrackRating";
+            setAppearance(Track.score, trackElement);
+
+            trackElement.style.fontSize = "10px";
+            trackElement.style.fontWeight = "bold";
+            trackElement.style.paddingLeft = "5px";
+
+            if (Track.score !== -1) {
+              trackElement.title = `${Track.ratings} ratings`;
+              trackElement.innerText = `[${Track.score.toFixed(0)}]`;
+              trackElement.href = Track.url;
+
+              songTitleBox.appendChild(trackElement);
+            }
+          } else {
+            console.debug("[AOTYfy] Can't find song playing on the album tracklist.");
           }
         } else {
-          console.debug("[AOTYfy] Can't find song playing on the album tracklist.");
-        }
-      } else {
-        throw new AOTYError(
-          "[AOTYfy] Can't find NPV song element, probably an extension version you're using is outdated/broken.",
-        );
-      }
-    }
-
-    // render score card in Now Playing view
-    if (Settings.showInSidebar) {
-      waitForElement(".main-nowPlayingView-nowPlayingWidget")
-        .then(async (el) => {
-          let NPWidget: HTMLElement = el as HTMLElement;
-
-          if (!scoreCardContainer || !document.body.contains(scoreCardContainer)) {
-            scoreCardContainer = document.createElement("div");
-            NPWidget.insertAdjacentElement("afterend", scoreCardContainer);
-          }
-
-          const ScoreItem = (data: { score: number; ratings: number }) => ({
-            score: data.score,
-            ratings: data.ratings,
-            url: Album.url,
-          });
-
-          ReactDOM.render(
-            <ScoreCard
-              critic={ScoreItem(Album.ratings.critic)}
-              user={ScoreItem(Album.ratings.user)}
-              album={Album}
-              track={Track}
-              meta={Meta}
-            />,
-            scoreCardContainer,
+          throw new AOTYError(
+            "[AOTYfy] Can't find NPV song element, probably an extension version you're using is outdated/broken.",
           );
-        })
-        .catch((e: Error) => {
-          throw new AOTYError("[AOTYfy] Failed to find NPV Widget:\n" + e.message);
-        });
-    }
+        }
 
-    // create score elements in Now Playing bar
-    if (Settings.showInNowPlaying) {
-      ratingContainer = document.createElement("a");
+        ratingContainer = document.createElement("a");
 
-      const divContainer = document.createElement("div");
-      divContainer.style.gridArea = "rating";
-      divContainer.className = "aotyfy-AlbumRating";
-      divContainer.appendChild(ratingContainer);
+        const divContainer = document.createElement("div");
+        divContainer.style.gridArea = "rating";
+        divContainer.className = "aotyfy-AlbumRating";
+        divContainer.appendChild(ratingContainer);
 
-      let UserRating = Album.ratings.user;
+        let UserRating = Album.ratings.user;
 
-      console.log(`[AOTYfy] Album: ${UserRating.score} / ${UserRating.ratings}`);
-      ratingContainer.innerText = `${UserRating.score} (${UserRating.ratings} ratings)`;
+        console.log(`[AOTYfy] Album: ${UserRating.score} / ${UserRating.ratings}`);
+        ratingContainer.innerText = `${UserRating.score} (${UserRating.ratings} ratings)`;
 
-      setAppearance(UserRating.score, ratingContainer);
+        setAppearance(UserRating.score, ratingContainer);
 
-      if (Album.ratings.user.ratings == 0) {
-        ratingContainer.style.color = "var(--spice-extratext)";
-        ratingContainer.innerText = `No Ratings.`;
+        if (Album.ratings.user.ratings == 0) {
+          ratingContainer.style.color = "var(--spice-extratext)";
+          ratingContainer.innerText = `No Ratings.`;
+        }
+
+        ratingContainer.href = String(Album.url);
+        ratingContainer.style.fontSize = "12px";
+
+        infoContainer.style.gridTemplate =
+          '"title title" "badges subtitle" "rating rating" "quality quality" "genres genres" / auto 1fr auto auto';
+
+        infoContainer.appendChild(divContainer);
       }
-
-      ratingContainer.href = String(Album.url);
-      ratingContainer.style.fontSize = "12px";
-
-      infoContainer.style.gridTemplate =
-        '"title title" "badges subtitle" "rating rating" "quality quality" "genres genres" / auto 1fr auto auto';
-
-      infoContainer.appendChild(divContainer);
     }
   } catch (e: any) {
     throw new AOTYError(e.message);
@@ -674,15 +675,17 @@ export default async function main() {
       localStorage.setItem(SETTINGS_KEY, Settings.isEnabled);
       self.setState(Settings.isEnabled);
     }),
-    new Spicetify.Menu.Item("Show In Sidebar", Settings.isNotifications, (self) => {
+    new Spicetify.Menu.Item("Show In Sidebar", Settings.showInSidebar, (self) => {
       Settings.showInSidebar = !Settings.showInSidebar;
       localStorage.setItem(SHOW_IN_SIDEBAR_KEY, Settings.showInSidebar);
+      refreshRequest()
       self.setState(Settings.showInSidebar);
     }),
-    new Spicetify.Menu.Item("Show In Sidebar", Settings.isNotifications, (self) => {
-      Settings.showInSidebar = !Settings.showInSidebar;
-      localStorage.setItem(SHOW_IN_SIDEBAR_KEY, Settings.showInSidebar);
-      self.setState(Settings.showInSidebar);
+    new Spicetify.Menu.Item("Show In Now Playing", Settings.showInNowPlaying, (self) => {
+      Settings.showInNowPlaying = !Settings.showInNowPlaying;
+      localStorage.setItem(SHOW_IN_NOW_PLAYING_KEY, Settings.showInNowPlaying);
+      refreshRequest()
+      self.setState(Settings.showInNowPlaying);
     }),
     new Spicetify.Menu.Item("Show Notifications", Settings.isNotifications, (self) => {
       Settings.isNotifications = !Settings.isNotifications;

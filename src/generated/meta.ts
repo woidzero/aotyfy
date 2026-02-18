@@ -1,6 +1,14 @@
 // auto-generated - DO NOT EDIT
-export const __VERSION__ = '2.0.2';
+export const __VERSION__ = '2.0.3';
 export const __CHANGELOG__ = `
+<h2>[2.0.3] - 2026-02-18</h2><br />
+<h3>Fixed</h3><br />
+<ul>
+<li><code>artistLower</code> copies album title breaking the artist similarity comparison entirely</li>
+<li>Show in Sidebar/Now Playing are not working properly</li>
+<li>Car Seat Headrest &#39;Twin Fantasy&#39; searched incorrectly</li>
+<li>David Bowie &#39;Blackstar&#39; searched incorrectly</li>
+</ul><br />
 <h2>[2.0.2] - 2026-01-06</h2><br />
 <h3>Fixed</h3><br />
 <ul>

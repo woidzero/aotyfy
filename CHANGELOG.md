@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.3] - 2026-02-18
+
+### Fixed
+
+- `artistLower` copies album title breaking the artist similarity comparison entirely
+- Show in Sidebar/Now Playing are not working properly
+- Car Seat Headrest 'Twin Fantasy' searched incorrectly
+- David Bowie 'Blackstar' searched incorrectly
+
 ## [2.0.2] - 2026-01-06
 
 ### Fixed

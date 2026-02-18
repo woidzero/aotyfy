@@ -33,4 +33,4 @@ if (!existsSync(dir)) {
 }
 
 writeFileSync(outputPath, content);
-console.log("[build:meta] injected successfully.");
+console.log(`[build:meta] ${pkg.version} injected successfully.`);
