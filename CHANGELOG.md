@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.1.0] - 2026-03-03
+
+### Added
+
+- `src/core/` module: `api`, `dom`, `exceptions`, `metadata`, `settings`, `ui`, `utils` (logic moved out of `app.tsx`)
+
+### Changed
+
+- App entry point: `app.tsx` only wires UI and update flow; core logic lives in `src/core/`
+- Metadata: `getMeta()` is synchronous; object built with small helpers (`s`, `n`, `disc`) and safe fallbacks
+- UI lifecycle: UI is always created and initialized so enabling the extension after start works; songchange listener registered once
+- Types: removed duplicate `_State` in `global.d.ts`; `ScoreItem` progress bar width clamped for invalid scores
+
+### Fixed
+
+- `getTrack()`: null/undefined disc treated as disc 1; safe check for missing disc/track index
+
+### Removed
+
+- `src/components/Icons.tsx`, `src/components/TrackItem.tsx`
+- `src/exceptions.tsx`, `src/utils.tsx` (replaced by `src/core/exceptions.ts`, `src/core/utils.ts`)
+- `scripts/meta.js`, `src/generated/meta.ts` (replaced by extras script and generated extras)
+
 ## [2.0.3] - 2026-02-18
 
 ### Fixed

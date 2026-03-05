@@ -1,7 +1,7 @@
 {
   "name": "aotyfy",
   "description": "🔹 Album of the Year user & critic ratings for Spotify.",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "author": "woidzero",
   "private": true,
   "license": "MIT",
@@ -9,15 +9,17 @@
     "watch": "spicetify watch -e",
     "format": "prettier --write .",
     "build": "spicetify-creator",
-    "build:meta": "node ./scripts/meta.js",
-    "release": "bun run build:meta && spicetify-creator --out=dist --minify"
+    "build:extras": "node ./scripts/extras.js",
+    "release": "bun run build:extras && spicetify-creator --out=dist --minify"
   },
   "dependencies": {
     "axios": "^1.13.2",
-    "cheerio": "^1.1.2"
+    "cheerio": "^1.1.2",
+    "jquery": "^4.0.0"
   },
   "devDependencies": {
-    "@types/react": "^19.2.7",
+    "@types/jquery": "^4.0.0",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "knip": "^5.78.0",
     "marked": "^17.0.1",
