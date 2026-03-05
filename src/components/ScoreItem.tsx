@@ -1,10 +1,7 @@
-// oxlint-disable no-unused-vars
 const { React } = Spicetify;
+import { setAppearance } from "../core/dom";
 
-import { _ScoreItem } from "../types/global";
-import { setAppearance } from "../utils";
-
-export const ScoreItem = ({ label, score, ratings, url }: _ScoreItem) => (
+export const ScoreItem = ({ label, score, ratings, url }: { label: string, score: number, ratings: number, url: string }) => (
   <div
     className="e-91000-box e-91000-baseline e-91000-box--naked e-91000-box--browser-default-focus e-91000-box--padding-custom e-91000-box--min-size e-91000-Box-sc-8t9c76-0 Box-group-naked-listRow-minBlockSize_32px Box-sc-8t9c76-0 Box-group-naked-listRow-minBlockSize_32px"
     data-encore-id="listRow"
@@ -33,7 +30,7 @@ export const ScoreItem = ({ label, score, ratings, url }: _ScoreItem) => (
           className="e-91000-text encore-text-body-medium"
           data-encore-id="text"
           style={{
-            color: setAppearance(score),
+            color: setAppearance(score) as string,
             cursor: "pointer",
             textAlign: "center",
             display: "flex",
@@ -62,9 +59,9 @@ export const ScoreItem = ({ label, score, ratings, url }: _ScoreItem) => (
               className="progress"
               style={{
                 position: "absolute",
-                width: score + "%",
+                width: (score >= 0 && score <= 100 ? score : 0) + "%",
                 height: "4px",
-                backgroundColor: setAppearance(score),
+                backgroundColor: setAppearance(score) as string,
                 left: "0",
               }}
             ></span>
