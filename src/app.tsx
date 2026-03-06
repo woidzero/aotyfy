@@ -90,7 +90,7 @@ async function update(force: boolean = true) {
       console.debug("[aotyfy] cache", Album)
     } else {
       try {
-        Album = await getAPI(Meta);
+        Album = await getAPI(Meta, true, force);
 
         if (!Album.valid && Settings.strict.value) {
           console.debug("[aotyfy] unable to find, trying again ...")

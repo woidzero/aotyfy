@@ -23,10 +23,10 @@ export function getMeta(data: Record<string, any>): AOTYFY._Meta {
       title: s(md?.title),
     },
     type: null,
-    skipSimcheck: false,
+    skipSimcheck: false
   };
 
-  const IGNORE_ARTISTS = ["Weezer", "SOPHIE", "Crystal Castles", "underscores", "Ninajirachi"];
+  const IGNORE_ARTISTS = ["Weezer", "SOPHIE", "Crystal Castles", "underscores", "Ninajirachi", "slayr"];
 
   if (!IGNORE_ARTISTS.includes(Meta.artist.name)) {
     Meta.album.title = Meta.album.title.split(" -")[0];

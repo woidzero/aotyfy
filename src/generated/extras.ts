@@ -1,7 +1,16 @@
 // auto-generated - DO NOT EDIT
-export const __VERSION__ = '2.1.0';
+export const __VERSION__ = '2.1.1';
 export const __CHANGELOG__ = `
-<h2>[2.1.0] - 2026-03-03</h2><br />
+<h2>[2.1.1] - 2026-03-06</h2><br />
+<h3>Added</h3><br />
+<ul>
+<li><code>slayr</code> in artist replace ignore list</li>
+</ul><br />
+<h3>Fixed</h3><br />
+<ul>
+<li>Using cached data if force present, make it impossible to overwrite cached album</li>
+</ul><br />
+<h2>[2.1.0] - 2026-03-05</h2><br />
 <h3>Added</h3><br />
 <ul>
 <li><code>src/core/</code> module: <code>api</code>, <code>dom</code>, <code>exceptions</code>, <code>metadata</code>, <code>settings</code>, <code>ui</code>, <code>utils</code> (logic moved out of <code>app.tsx</code>)</li>

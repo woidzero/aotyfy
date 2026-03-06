@@ -209,14 +209,14 @@ async function parse(url: string) {
 /**
  * fetches AOTY page URL and parses album/track API
  */
-export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true): Promise<AOTYFY._Album> {
+export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true, force: boolean = false): Promise<AOTYFY._Album> {
   /**
    * caching albums in local storage
    */
   const SAID = extractStr(/^spotify:album:(.+)$/, meta.album.uri);
   const Storage = Settings.storage.get()
 
-  if (SAID && Storage) {
+  if (SAID && Storage && !force) {
     const cachedAOTYID = Storage[SAID];
     const cachedUrl = `https://www.albumoftheyear.org/album/${cachedAOTYID}.php`;
 

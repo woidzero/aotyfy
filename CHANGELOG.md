@@ -1,6 +1,16 @@
 # Changelog
 
-## [2.1.0] - 2026-03-03
+## [2.1.1] - 2026-03-06
+
+### Added
+
+- `slayr` in artist replace ignore list
+
+### Fixed
+
+- Using cached data if force present, make it impossible to overwrite cached album
+
+## [2.1.0] - 2026-03-05
 
 ### Added
 
