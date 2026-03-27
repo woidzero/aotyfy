@@ -25,7 +25,7 @@
     "marked": "^17.0.1",
     "prettier": "^3.7.4",
     "spicetify-creator": "^1.0.17",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "type": "module"
 }
