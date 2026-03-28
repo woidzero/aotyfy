@@ -1,6 +1,11 @@
 // auto-generated - DO NOT EDIT
-export const __VERSION__ = '2.1.1';
+export const __VERSION__ = '2.1.2';
 export const __CHANGELOG__ = `
+<h2>[2.1.2] - 2026-03-29</h2><br />
+<h3>Fixed</h3><br />
+<ul>
+<li>Improved track and disc indexing algorithm</li>
+</ul><br />
 <h2>[2.1.1] - 2026-03-06</h2><br />
 <h3>Added</h3><br />
 <ul>

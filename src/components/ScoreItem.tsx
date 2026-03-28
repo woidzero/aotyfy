@@ -1,7 +1,7 @@
 const { React } = Spicetify;
 import { setAppearance } from "../core/dom";
 
-export const ScoreItem = ({ label, score, ratings, url }: { label: string, score: number, ratings: number, url: string }) => (
+export const ScoreItem = ({ label, score, ratings, url }: { label: string; score: number; ratings: number; url: string }) => (
   <div
     className="e-91000-box e-91000-baseline e-91000-box--naked e-91000-box--browser-default-focus e-91000-box--padding-custom e-91000-box--min-size e-91000-Box-sc-8t9c76-0 Box-group-naked-listRow-minBlockSize_32px Box-sc-8t9c76-0 Box-group-naked-listRow-minBlockSize_32px"
     data-encore-id="listRow"

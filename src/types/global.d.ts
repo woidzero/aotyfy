@@ -1,29 +1,29 @@
 declare namespace AOTYFY {
   interface _Elements {
-    RatingContainer: JQuery<HTMLElement> | null
-    ScoreCardContainer: JQuery<HTMLElement> | null
-    SongTitleBox: JQuery<HTMLElement> | null
-    InfoContainer: JQuery<HTMLElement> | null
+    RatingContainer: JQuery<HTMLElement> | null;
+    ScoreCardContainer: JQuery<HTMLElement> | null;
+    SongTitleBox: JQuery<HTMLElement> | null;
+    InfoContainer: JQuery<HTMLElement> | null;
   }
 
   interface _Album {
-    valid: boolean
+    valid: boolean;
     ratings: {
       user: {
-        score: number
-        ratings: number
+        score: number;
+        ratings: number;
       };
       critic: {
-        score: number
-        ratings: number
+        score: number;
+        ratings: number;
       };
     };
-    format: string
-    year: number
-    label: any[] | string
-    url: string
-    verified: boolean
-    tracks?: Array<_Track>
+    format: string;
+    year: number;
+    label: any[] | string;
+    url: string;
+    verified: boolean;
+    tracks?: Array<_Track>;
   }
 
   interface _State {
@@ -32,10 +32,22 @@ declare namespace AOTYFY {
     prev: { track: string | null; request: number };
   }
 
+  interface _State {
+    lock: boolean;
+    cache: {
+      uri: string;
+      album: _Album | null;
+    };
+    prev: {
+      track: _Track | null;
+      request: number;
+    };
+  }
+
   interface _Meta {
     ctx: {
       uri: string;
-    }
+    };
     artist: {
       uri: string;
       name: string;

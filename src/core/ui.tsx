@@ -29,7 +29,7 @@ class Elements {
     ]);
 
     if (!infoContainer || !playingBar) {
-      throw new CriticalError("unable obtain required elements")
+      throw new CriticalError("unable obtain required elements");
     }
 
     this.songTitleBox = songTitleBox;
@@ -42,22 +42,17 @@ class Elements {
     // album rating container
     this.albumRating = $("<a class='aotyfy-AlbumRating'></a>").css({
       "font-size": "12px",
-      "color": "var(--spice-extratext)"
+      color: "var(--spice-extratext)",
     });
 
-    this.albumRatingContainer = $("<div class='aotyfy-AlbumRatingContainer'></div>")
-      .css({ "grid-area": "rating" })
-      .append(this.albumRating);
+    this.albumRatingContainer = $("<div class='aotyfy-AlbumRatingContainer'></div>").css({ "grid-area": "rating" }).append(this.albumRating);
 
-    this.infoContainer = infoContainer.css(
-      "grid-template",
-      `"title title" "badges subtitle" "rating rating" "quality quality" "genres genres" / auto 1fr auto auto`
-    ).append(this.albumRatingContainer);
+    this.infoContainer = infoContainer.css("grid-template", `"title title" "badges subtitle" "rating rating" "quality quality" "genres genres" / auto 1fr auto auto`).append(this.albumRatingContainer);
 
     this.trackRating = $("<a class='aotyfy-TrackRating'></a>").css({
       "font-size": "10px",
       "font-weight": "bold",
-      "padding-left": "5px"
+      "padding-left": "5px",
     });
   }
 }
@@ -76,8 +71,11 @@ export class UI {
   async waitForRerender(): Promise<void> {
     const oldNode = $(Selectors.SONG_TITLE_BOX)[0];
 
-    return new Promise<void>(resolve => {
-      if (!oldNode) { resolve(); return; }
+    return new Promise<void>((resolve) => {
+      if (!oldNode) {
+        resolve();
+        return;
+      }
 
       const observer = new MutationObserver(() => {
         if (!document.contains(oldNode)) {
@@ -87,7 +85,10 @@ export class UI {
       });
 
       observer.observe(document.body, { childList: true, subtree: true });
-      setTimeout(() => { observer.disconnect(); resolve(); }, 2000);
+      setTimeout(() => {
+        observer.disconnect();
+        resolve();
+      }, 2000);
     });
   }
 
@@ -100,10 +101,12 @@ export class UI {
 
     if (!valid(Track.score)) {
       console.warn("[aotyfy] track score is invalid");
+      this.el.trackRating.hide();
       return;
     }
 
     const songTitleBox = $(Selectors.SONG_TITLE_BOX);
+
     if (!songTitleBox.length) {
       console.warn("[aotyfy] unable to find song title box");
       return;
@@ -125,14 +128,13 @@ export class UI {
   updateAlbum(Album: AOTYFY._Album) {
     this.el.albumRatingContainer.show();
 
-    if (!Album.ratings.user) {
+    if (!valid(Album.ratings.user.ratings)) {
       this.el.albumRating.text("No ratings").attr("href", "#");
+      console.warn("[aotyfy] no ratings for this release");
       return;
     }
 
-    this.el.albumRating
-      .text(`${Album.ratings.user.score} (${Album.ratings.user.ratings} ratings)`)
-      .attr("href", Album.url);
+    this.el.albumRating.text(`${Album.ratings.user.score} (${Album.ratings.user.ratings} ratings)`).attr("href", Album.url);
 
     setAppearance(Album.ratings.user.score, this.el.albumRating);
   }
@@ -149,15 +151,11 @@ export class UI {
     }
 
     if (document.body.contains(this.el.sidebarCardWrapper[0])) {
-      console.info("[aotyfy] document contains widget, updating")
-      ReactDOM.unmountComponentAtNode(this.el.sidebarCardWrapper[0])
+      console.info("[aotyfy] document contains widget, updating");
+      ReactDOM.unmountComponentAtNode(this.el.sidebarCardWrapper[0]);
     }
 
-    this.el.NPWidget
-      .after(this.el.sidebarCardWrapper)
-      .css({
-        "margin-bottom": "0"
-      })
+    this.el.NPWidget.after(this.el.sidebarCardWrapper).css({ "margin-bottom": "0" });
 
     const ScoreItem = (data: { score: number; ratings: number }): AOTYFY._ScoreItem => ({
       score: data.score,
@@ -169,16 +167,13 @@ export class UI {
       <ScoreCard
         items={{
           critic: ScoreItem(Album.ratings.critic),
-          user: ScoreItem(Album.ratings.user)
+          user: ScoreItem(Album.ratings.user),
         }}
       />,
-      this.el.sidebarCardWrapper[0]
+      this.el.sidebarCardWrapper[0],
     );
   }
 
-  /**
-   * hide
-  */
   hideNBP() {
     this.el.trackRating.hide();
     this.el.albumRatingContainer.hide();

@@ -23,7 +23,7 @@ export function getMeta(data: Record<string, any>): AOTYFY._Meta {
       title: s(md?.title),
     },
     type: null,
-    skipSimcheck: false
+    skipSimcheck: false,
   };
 
   const IGNORE_ARTISTS = ["Weezer", "SOPHIE", "Crystal Castles", "underscores", "Ninajirachi", "slayr"];
@@ -56,6 +56,15 @@ export function getMeta(data: Record<string, any>): AOTYFY._Meta {
     case "spotify:album:3RDAqHBWBHXRwVSJF9T8VW":
       Meta.type = "lp";
       break;
+    // Earl Sweatshirt's 'I Don't Like Shit, I Don't Go Outside'
+    case "spotify:album:3wUv2IjD5hPrqlPakpczQa":
+      Meta.album.title = "I Don't Like Shit, I Don't Go Outside";
+      break;
+    case "spotify:album:0JB2T1lOZ03obXXun0CLzY":
+      Meta.type = "reissue";
+      break;
+    case "spotify:album:7CwtKHbZbn6nYqBOeoKaUp":
+      Meta.album.title = "Experimental Age";
     default:
       break;
   }
@@ -82,12 +91,6 @@ export function getMeta(data: Record<string, any>): AOTYFY._Meta {
           Meta.album.title = "SOPHIE";
           Meta.skipSimcheck = true;
           Meta.type = "ep";
-          break;
-      }
-      switch (Meta.album.uri) {
-        // product spotify reissue
-        case "spotify:album:0JB2T1lOZ03obXXun0CLzY":
-          Meta.type = "reissue";
           break;
       }
       break;

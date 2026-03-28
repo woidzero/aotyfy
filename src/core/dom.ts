@@ -7,7 +7,8 @@ import $ from "jquery";
 export const Selectors = {
   // spotify selectors
   NOW_PLAYING_WIDGET: ".main-nowPlayingView-nowPlayingWidget",
-  SONG_TITLE_BOX: "#main > div > div.Root__top-container > div.Root__now-playing-bar > aside > div > div.main-nowPlayingBar-left > div > div.main-nowPlayingWidget-trackInfo.main-trackInfo-container > div.main-trackInfo-name > div > span > span > div > span",
+  SONG_TITLE_BOX:
+    "#main > div > div.Root__top-container > div.Root__now-playing-bar > aside > div > div.main-nowPlayingBar-left > div > div.main-nowPlayingWidget-trackInfo.main-trackInfo-container > div.main-trackInfo-name > div > span > span > div > span",
   INFO_CONTAINER: ".main-nowPlayingWidget-trackInfo.main-trackInfo-container",
   PLAYING_BAR: "div.Root__now-playing-bar > aside > div",
 
@@ -39,7 +40,7 @@ export function setAppearance(score: number | string, element?: JQuery): string 
 
   if (value === -1 || !Number.isFinite(value)) {
     if (element) {
-      element.css({ "color": color });
+      element.css({ color: color });
       return element;
     }
     return color;
@@ -50,7 +51,7 @@ export function setAppearance(score: number | string, element?: JQuery): string 
   else color = "#d76666";
 
   if (element) {
-    element.css({ "color": color });
+    element.css({ color: color });
     return element;
   }
 

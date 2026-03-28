@@ -19,7 +19,7 @@ let ui: UI;
 /**
  * extension states
  */
-const State: Record<string, any> = {
+const State: AOTYFY._State = {
   lock: false,
   cache: {
     uri: null,
@@ -27,9 +27,9 @@ const State: Record<string, any> = {
   },
   prev: {
     track: null,
-    request: 0
-  }
-}
+    request: 0,
+  },
+};
 
 /**
  * button cooldown
@@ -49,10 +49,9 @@ async function refresh() {
   State.prev.request = Date.now();
   State.prev.track = null;
 
-  await update(true)
-    .then(() => {
-      Spicetify.showNotification("[aotyfy] Scores refreshed", false);
-    });
+  await update(true).then(() => {
+    Spicetify.showNotification("[aotyfy] Scores refreshed", false);
+  });
 
   console.info("[aotyfy] scores refreshed");
 }
@@ -80,26 +79,31 @@ async function update(force: boolean = true) {
 
     // fetch
     const Meta: AOTYFY._Meta = getMeta(data);
-    console.debug("[aotyfy] fetched meta", Meta)
+    console.debug("[aotyfy] fetched meta", Meta);
 
     // globals
     let Album: AOTYFY._Album;
 
-    if (State.cache.uri === Meta.album.uri && !force) {
+    const isLocal = Meta.track.uri.startsWith("spotify:local");
+
+    // use track uri if song from local files
+    const cacheKey = isLocal ? Meta.track.uri : Meta.album.uri;
+
+    if (State.cache.uri === cacheKey && !force && State.cache.album) {
       Album = State.cache.album;
-      console.debug("[aotyfy] cache", Album)
+      console.debug("[aotyfy] cache", Album);
     } else {
       try {
         Album = await getAPI(Meta, true, force);
 
         if (!Album.valid && Settings.strict.value) {
-          console.debug("[aotyfy] unable to find, trying again ...")
-          Album = await getAPI(Meta, false)
+          console.debug("[aotyfy] unable to find, trying again ...");
+          Album = await getAPI(Meta, false);
         }
 
         // set album in cache
         State.cache.album = Album;
-        State.cache.uri = Meta.album.uri;
+        State.cache.uri = cacheKey;
       } catch (e: any) {
         ui.hide();
         State.cache.uri = null;
@@ -123,17 +127,17 @@ async function update(force: boolean = true) {
     }
 
     if (Settings.showSidebar.value) {
-      console.debug("[aotyfy] showing sidebar")
+      console.debug("[aotyfy] showing sidebar");
       ui.updateSidebar(Album);
     } else {
-      ui.hideSidebar()
+      ui.hideSidebar();
     }
   } catch (e: any) {
     if (e instanceof AOTYFYError) throw e;
     throw new CriticalError(`updating failed: ${e.message}`);
   } finally {
     State.lock = false;
-    console.info("[aotyfy] scores updated")
+    console.info("[aotyfy] scores updated");
   }
 }
 
@@ -145,23 +149,25 @@ export default async function main() {
   new Spicetify.Menu.SubMenu("AOTYfy", [
     new Spicetify.Menu.Item("Enabled", Settings.isEnabled.get(), async (i) => {
       Settings.isEnabled.toggle(i);
-      await update()
+      await update();
       Spicetify.showNotification("[aotyfy] Extension: " + (Settings.isEnabled.get() ? "enabled" : "disabled"));
     }),
     new Spicetify.Menu.Item("Show In Sidebar", Settings.showSidebar.get(), async (i) => {
       Settings.showSidebar.toggle(i);
-      await update()
+      await update();
       Spicetify.showNotification("[aotyfy] Showing in sidebar: " + (Settings.showSidebar.get() ? "enabled" : "disabled"));
     }),
     new Spicetify.Menu.Item("Show In Now Playing Bar", Settings.showNPB.get(), async (i) => {
       Settings.showNPB.toggle(i);
-      await update()
+      await update();
       Spicetify.showNotification("[aotyfy] Showing in now playing bar: " + (Settings.showNPB.get() ? "enabled" : "disabled"));
     }),
     new Spicetify.Menu.Item("Strict Search", Settings.strict.get(), async (i) => {
       Settings.strict.toggle(i);
-      await update()
-      Spicetify.showNotification("[aotyfy] Strict search: " + (Settings.strict.get() ? "enabled" : "disabled. Disabling this setting will allow extension to use only title instead of `title - artist` to search release."));
+      await update();
+      Spicetify.showNotification(
+        "[aotyfy] Strict search: " + (Settings.strict.get() ? "enabled" : "disabled. Disabling this setting will allow extension to use only title instead of `title - artist` to search release."),
+      );
     }),
     new Spicetify.Menu.Item("Show Notifications", Settings.notifications.get(), (i) => {
       Settings.notifications.toggle(i);

@@ -128,7 +128,7 @@ async function parse(url: string) {
             artist: artists,
             score: isNaN(score) ? -1 : score,
             ratings: isNaN(ratings) ? -1 : ratings,
-            discNumber: discIndex,
+            discNumber: discIndex + 1,
             url: trackURL,
           };
 
@@ -190,14 +190,14 @@ async function parse(url: string) {
         score: criticScore,
         ratings: criticRatingsCount,
       },
-    }
-    Album.format = format
-    Album.year = year
-    Album.label = labels
-    Album.url = url
-    Album.verified = verified
-    Album.tracks = Tracks
-    Album.valid = true
+    };
+    Album.format = format;
+    Album.year = year;
+    Album.label = labels;
+    Album.url = url;
+    Album.verified = verified;
+    Album.tracks = Tracks;
+    Album.valid = true;
 
     console.log(`[aotyfy] api response:`, Album);
     return Album;
@@ -214,7 +214,7 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
    * caching albums in local storage
    */
   const SAID = extractStr(/^spotify:album:(.+)$/, meta.album.uri);
-  const Storage = Settings.storage.get()
+  const Storage = Settings.storage.get();
 
   if (SAID && Storage && !force) {
     const cachedAOTYID = Storage[SAID];
@@ -305,9 +305,7 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
       }));
 
       // find the most similar artist
-      const mostSimilarByArtist = releasesWithSimilarity.reduce((best, current) =>
-        current.artistSimilarity > best.artistSimilarity ? current : best,
-      );
+      const mostSimilarByArtist = releasesWithSimilarity.reduce((best, current) => (current.artistSimilarity > best.artistSimilarity ? current : best));
 
       console.debug(`[AOTYfy] most similar artist: ${mostSimilarByArtist.artist} (${mostSimilarByArtist.artistSimilarity})`);
 
@@ -324,9 +322,7 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
 
       // if artist has multiple albums, find the most similar album
       if (artistReleases.length > 1) {
-        const bestAlbumMatch = artistReleases.reduce((best, current) =>
-          current.albumSimilarity! > best.albumSimilarity! ? current : best,
-        );
+        const bestAlbumMatch = artistReleases.reduce((best, current) => (current.albumSimilarity! > best.albumSimilarity! ? current : best));
         console.debug(`[aotyfy] multiple albums from artist, best match: ${bestAlbumMatch.title}`);
         aotyURL = bestAlbumMatch.url;
       }
@@ -372,7 +368,7 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
 
       console.debug("[aotyfy] cached release: ", SAID, "->", aotyId);
     } else {
-      console.warn(`[aotyfy] can't extract 'aotyId': ${aotyId}`)
+      console.warn(`[aotyfy] can't extract 'aotyId': ${aotyId}`);
     }
   }
 
@@ -384,22 +380,35 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
  */
 export function getTrack(meta: AOTYFY._Meta, album: AOTYFY._Album): AOTYFY._Track | null {
   if (!album.tracks || album.tracks.length === 0) {
-    console.warn("[aotyfy] release doesn't contain any tracks")
+    console.warn("[aotyfy] release doesn't contain any tracks");
     return null;
   }
 
-  const discIndex = (meta.track.disc ?? 1) - 1;
+  const normalize = (s: string) =>
+    decodeURIComponent(s)
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .trim();
+
+  const isLocal = meta.track.uri.startsWith("spotify:local");
+
+  if (isLocal) {
+    return album.tracks.find((t) => normalize(t.title) === normalize(meta.track.title)) ?? null;
+  }
+
+  const discNumber = meta.track.disc || 1;
   const trackIndex = meta.track.number - 1;
 
-  const discs = album.tracks.reduce<Record<number, typeof album.tracks>>((acc, t: AOTYFY._Track) => {
+  const discs = album.tracks.reduce<Record<number, typeof album.tracks>>((acc, t) => {
     (acc[t.discNumber] ??= []).push(t);
     return acc;
   }, {});
 
-  const discTracks = discs[discIndex];
+  const discTracks = discs[discNumber];
+
   if (!discTracks || !discTracks[trackIndex]) {
-    throw new APIError("unable to find this track")
+    return album.tracks.find((t) => normalize(t.title) === normalize(meta.track.title)) ?? null;
   }
 
-  return discTracks[trackIndex] ?? album.tracks.find((t) => t.title.toLowerCase() === meta.track.title.toLowerCase());
+  return discTracks[trackIndex];
 }

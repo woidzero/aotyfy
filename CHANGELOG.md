@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.2] - 2026-03-29
+
+### Fixed
+
+- Improved track and disc indexing algorithm
+
 ## [2.1.1] - 2026-03-06
 
 ### Added

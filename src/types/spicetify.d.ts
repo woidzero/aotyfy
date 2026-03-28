@@ -82,22 +82,10 @@ declare namespace Spicetify {
      *  - `onprogress` type when track progress changes.
      *  - `appchange` type when user changes page.
      */
-    function addEventListener(
-      type: string,
-      callback: (event?: Event) => void,
-    ): void;
-    function addEventListener(
-      type: "songchange",
-      callback: (event?: Event & { data: PlayerState }) => void,
-    ): void;
-    function addEventListener(
-      type: "onplaypause",
-      callback: (event?: Event & { data: PlayerState }) => void,
-    ): void;
-    function addEventListener(
-      type: "onprogress",
-      callback: (event?: Event & { data: number }) => void,
-    ): void;
+    function addEventListener(type: string, callback: (event?: Event) => void): void;
+    function addEventListener(type: "songchange", callback: (event?: Event & { data: PlayerState }) => void): void;
+    function addEventListener(type: "onplaypause", callback: (event?: Event & { data: PlayerState }) => void): void;
+    function addEventListener(type: "onprogress", callback: (event?: Event & { data: number }) => void): void;
     function addEventListener(
       type: "appchange",
       callback: (
@@ -209,10 +197,7 @@ declare namespace Spicetify {
      * @param type
      * @param callback
      */
-    function removeEventListener(
-      type: string,
-      callback: (event?: Event) => void,
-    ): void;
+    function removeEventListener(type: string, callback: (event?: Event) => void): void;
     /**
      * Seek track to position.
      * @param position can be in percentage (0 to 1) or in milisecond.
@@ -305,56 +290,15 @@ declare namespace Spicetify {
     }
 
     function head(url: string, headers?: Headers): Promise<Headers>;
-    function get(
-      url: string,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response["body"]>;
-    function post(
-      url: string,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response["body"]>;
-    function put(
-      url: string,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response["body"]>;
-    function del(
-      url: string,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response["body"]>;
-    function patch(
-      url: string,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response["body"]>;
-    function sub(
-      url: string,
-      callback: (b: Response["body"]) => void,
-      onError?: (e: Error) => void,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response["body"]>;
-    function postSub(
-      url: string,
-      body: Body | null,
-      callback: (b: Response["body"]) => void,
-      onError?: (e: Error) => void,
-    ): Promise<Response["body"]>;
-    function request(
-      method: Method,
-      url: string,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response>;
-    function resolve(
-      method: Method,
-      url: string,
-      body?: Body,
-      headers?: Headers,
-    ): Promise<Response>;
+    function get(url: string, body?: Body, headers?: Headers): Promise<Response["body"]>;
+    function post(url: string, body?: Body, headers?: Headers): Promise<Response["body"]>;
+    function put(url: string, body?: Body, headers?: Headers): Promise<Response["body"]>;
+    function del(url: string, body?: Body, headers?: Headers): Promise<Response["body"]>;
+    function patch(url: string, body?: Body, headers?: Headers): Promise<Response["body"]>;
+    function sub(url: string, callback: (b: Response["body"]) => void, onError?: (e: Error) => void, body?: Body, headers?: Headers): Promise<Response["body"]>;
+    function postSub(url: string, body: Body | null, callback: (b: Response["body"]) => void, onError?: (e: Error) => void): Promise<Response["body"]>;
+    function request(method: Method, url: string, body?: Body, headers?: Headers): Promise<Response>;
+    function resolve(method: Method, url: string, body?: Body, headers?: Headers): Promise<Response>;
   }
   /**
    * Fetch interesting colors from URI.
@@ -490,25 +434,16 @@ declare namespace Spicetify {
     type KeysDefine =
       | string
       | {
-        key: string;
-        ctrl?: boolean;
-        shift?: boolean;
-        alt?: boolean;
-        meta?: boolean;
-      };
+          key: string;
+          ctrl?: boolean;
+          shift?: boolean;
+          alt?: boolean;
+          meta?: boolean;
+        };
     const KEYS: Record<ValidKey, string>;
-    function registerShortcut(
-      keys: KeysDefine,
-      callback: (event: KeyboardEvent) => void,
-    ): void;
-    function registerIsolatedShortcut(
-      keys: KeysDefine,
-      callback: (event: KeyboardEvent) => void,
-    ): void;
-    function registerImportantShortcut(
-      keys: KeysDefine,
-      callback: (event: KeyboardEvent) => void,
-    ): void;
+    function registerShortcut(keys: KeysDefine, callback: (event: KeyboardEvent) => void): void;
+    function registerIsolatedShortcut(keys: KeysDefine, callback: (event: KeyboardEvent) => void): void;
+    function registerImportantShortcut(keys: KeysDefine, callback: (event: KeyboardEvent) => void): void;
     function _deregisterShortcut(keys: KeysDefine): void;
     function deregisterImportantShortcut(keys: KeysDefine): void;
     function changeShortcut(keys: KeysDefine, newKeys: KeysDefine): void;
@@ -545,11 +480,7 @@ declare namespace Spicetify {
      * Create a single toggle.
      */
     class Item {
-      constructor(
-        name: string,
-        isEnabled: boolean,
-        onClick: (self: Item) => void,
-      );
+      constructor(name: string, isEnabled: boolean, onClick: (self: Item) => void);
       name: string;
       isEnabled: boolean;
       /**
@@ -636,11 +567,7 @@ declare namespace Spicetify {
    * @param isError If true, bubble will be red. Defaults to false.
    * @param msTimeout Time in milliseconds to display the bubble. Defaults to Spotify's value.
    */
-  function showNotification(
-    text: string,
-    isError?: boolean,
-    msTimeout?: number,
-  ): void;
+  function showNotification(text: string, isError?: boolean, msTimeout?: number): void;
   /**
    * Set of APIs method to parse and validate URIs.
    */
@@ -847,11 +774,7 @@ declare namespace Spicetify {
      * @param opt_args Optional arguments to the URI constructor.
      * @return The URI object created.
      */
-    static fromByteString(
-      type: string,
-      idByteString: string,
-      opt_args?: any,
-    ): URI;
+    static fromByteString(type: string, idByteString: string, opt_args?: any): URI;
 
     /**
      * Clones a given SpotifyURI instance.
@@ -968,12 +891,7 @@ declare namespace Spicetify {
      * @param play Toggles autoplay
      * @return The track URI.
      */
-    static trackURI(
-      id: string,
-      anchor: string,
-      context: string,
-      play: boolean,
-    ): URI;
+    static trackURI(id: string, anchor: string, context: string, play: boolean): URI;
 
     /**
      * Creates a new 'trackset' type URI.
@@ -1130,12 +1048,7 @@ declare namespace Spicetify {
      * @param duration The track duration in ms.
      * @return The local URI.
      */
-    static localURI(
-      artist: string,
-      album: string,
-      track: string,
-      duration: number,
-    ): URI;
+    static localURI(artist: string, album: string, track: string, duration: number): URI;
 
     /**
      * Creates a new 'library' type URI.
@@ -1413,16 +1326,8 @@ declare namespace Spicetify {
       | "volume-two-wave"
       | "watch"
       | "x";
-    type OnClickCallback = (
-      uris: string[],
-      uids?: string[],
-      contextUri?: string,
-    ) => void;
-    type ShouldAddCallback = (
-      uris: string[],
-      uids?: string[],
-      contextUri?: string,
-    ) => boolean;
+    type OnClickCallback = (uris: string[], uids?: string[], contextUri?: string) => void;
+    type ShouldAddCallback = (uris: string[], uids?: string[], contextUri?: string) => boolean;
 
     // Single context menu item
     class Item {
@@ -1430,13 +1335,7 @@ declare namespace Spicetify {
        * List of valid icons to use.
        */
       static readonly iconList: Icon[];
-      constructor(
-        name: string,
-        onClick: OnClickCallback,
-        shouldAdd?: ShouldAddCallback,
-        icon?: Icon,
-        disabled?: boolean,
-      );
+      constructor(name: string, onClick: OnClickCallback, shouldAdd?: ShouldAddCallback, icon?: Icon, disabled?: boolean);
       name: string;
       icon: Icon | string;
       disabled: boolean;
@@ -1463,12 +1362,7 @@ declare namespace Spicetify {
      * `Item`s in `subItems` array shouldn't be registered.
      */
     class SubMenu {
-      constructor(
-        name: string,
-        subItems: Iterable<Item>,
-        shouldAdd?: ShouldAddCallback,
-        disabled?: boolean,
-      );
+      constructor(name: string, subItems: Iterable<Item>, shouldAdd?: ShouldAddCallback, disabled?: boolean);
       name: string;
       disabled: boolean;
       /**
@@ -1535,19 +1429,7 @@ declare namespace Spicetify {
        * The preferred placement of the context menu when it opens.
        * Relative to trigger element.
        */
-      placement?:
-      | "top"
-      | "top-start"
-      | "top-end"
-      | "right"
-      | "right-start"
-      | "right-end"
-      | "bottom"
-      | "bottom-start"
-      | "bottom-end"
-      | "left"
-      | "left-start"
-      | "left-end";
+      placement?: "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end";
       /**
        * The x and y offset distances at which the context menu should open.
        * Relative to trigger element and `position`.
@@ -1561,24 +1443,18 @@ declare namespace Spicetify {
        * The menu UI to render inside of the context menu.
        */
       menu:
-      | typeof Spicetify.ReactComponent.Menu
-      | typeof Spicetify.ReactComponent.AlbumMenu
-      | typeof Spicetify.ReactComponent.PodcastShowMenu
-      | typeof Spicetify.ReactComponent.ArtistMenu
-      | typeof Spicetify.ReactComponent.PlaylistMenu;
+        | typeof Spicetify.ReactComponent.Menu
+        | typeof Spicetify.ReactComponent.AlbumMenu
+        | typeof Spicetify.ReactComponent.PodcastShowMenu
+        | typeof Spicetify.ReactComponent.ArtistMenu
+        | typeof Spicetify.ReactComponent.PlaylistMenu;
       /**
        * A child of the context menu. Should be `<button>`, `<a>`,
        * a custom react component that forwards a ref to a `<button>` or `<a>`,
        * or a function. If a function is passed it will be called with
        * (`isOpen`, `handleContextMenu`, `ref`) as arguments.
        */
-      children:
-      | Element
-      | ((
-        isOpen?: boolean,
-        handleContextMenu?: (e: MouseEvent) => void,
-        ref?: (e: Element) => void,
-      ) => Element);
+      children: Element | ((isOpen?: boolean, handleContextMenu?: (e: MouseEvent) => void, ref?: (e: Element) => void) => Element);
     };
     type MenuProps = {
       /**
@@ -1589,9 +1465,7 @@ declare namespace Spicetify {
        * Function that provides the element that focus should jump to when the menu
        * is opened
        */
-      getInitialFocusElement?: (
-        el: HTMLElement | null,
-      ) => HTMLElement | undefined | null;
+      getInitialFocusElement?: (el: HTMLElement | null) => HTMLElement | undefined | null;
     };
     type MenuItemProps = {
       /**
@@ -1642,19 +1516,7 @@ declare namespace Spicetify {
        * Relative to trigger element.
        * @default 'top'
        */
-      placement?:
-      | "top"
-      | "top-start"
-      | "top-end"
-      | "right"
-      | "right-start"
-      | "right-end"
-      | "bottom"
-      | "bottom-start"
-      | "bottom-end"
-      | "left"
-      | "left-start"
-      | "left-end";
+      placement?: "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end";
       /**
        * Class name to apply to the tooltip
        */
@@ -1716,12 +1578,7 @@ declare namespace Spicetify {
    */
   namespace Topbar {
     class Button {
-      constructor(
-        label: string,
-        icon: string,
-        onClick: (self: Button) => void,
-        disabled?: boolean,
-      );
+      constructor(label: string, icon: string, onClick: (self: Button) => void, disabled?: boolean);
       label: string;
       icon: string;
       onClick: (self: Button) => void;
