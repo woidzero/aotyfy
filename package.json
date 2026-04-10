@@ -21,7 +21,7 @@
     "@types/jquery": "^4.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "marked": "^17.0.5",
+    "marked": "^18.0.0",
     "prettier": "^3.8.1",
     "spicetify-creator": "^1.0.17",
     "typescript": "^6.0.2"
