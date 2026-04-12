@@ -37,7 +37,9 @@ class Elements {
     this.NPWidget = NPWidget;
 
     // sidebar wrapper
-    this.sidebarCardWrapper = $("<div class='aotyfy-SidebarCardWrapper'></div>");
+    this.sidebarCardWrapper = $("<div class='aotyfy-SidebarCardWrapper'></div>").css({
+      "z-index": 9999
+    });
 
     // album rating container
     this.albumRating = $("<a class='aotyfy-AlbumRating'></a>").css({

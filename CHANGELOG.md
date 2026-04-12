@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.3] - 2026-04-12
+
+### Fixed
+
+- Fixed z-order for score card in sidebar
+
 ## [2.1.2] - 2026-03-29
 
 ### Fixed

@@ -71,6 +71,11 @@ export function getMeta(data: Record<string, any>): AOTYFY._Meta {
 
   // fix by artist name + album title
   switch (Meta.artist.name) {
+    case "osquinn":
+      if (Meta.album.title != "Drive-By Lullabies") {
+        Meta.artist.name = "quinn";
+      }
+      break;
     case "Tapir!":
       switch (Meta.album.title) {
         case "The Pilgrim, Their God and The King of My Decrepit Mountain":
