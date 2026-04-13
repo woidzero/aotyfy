@@ -30,18 +30,21 @@ export const ScoreItem = ({ label, score, ratings, url }: { label: string; score
           className="e-91000-text encore-text-body-medium"
           data-encore-id="text"
           style={{
-            color: setAppearance(score) as string,
-            cursor: "pointer",
-            textAlign: "center",
             display: "flex",
+            alignItems: "center",
             flexDirection: "column",
-            width: "100%",
+            justifyContent: "center",
+            color: setAppearance(score) as string,
             textDecoration: "none",
+            textAlign: "center",
+            cursor: "pointer",
+            width: "100%",
           }}
         >
           <span
             style={{
               fontSize: "2.2rem",
+              fontWeight: "bold",
             }}
           >
             {score === -1 ? "NR" : score}
@@ -51,10 +54,9 @@ export const ScoreItem = ({ label, score, ratings, url }: { label: string; score
             style={{
               position: "relative",
               backgroundColor: "rgba(255, 255, 255, 0.2)",
-              width: "100%",
+              width: "50%",
               height: "4px",
-            }}
-          >
+            }}>
             <span
               className="progress"
               style={{
@@ -63,8 +65,7 @@ export const ScoreItem = ({ label, score, ratings, url }: { label: string; score
                 height: "4px",
                 backgroundColor: setAppearance(score) as string,
                 left: "0",
-              }}
-            ></span>
+              }}></span>
           </div>
         </a>
         <span
@@ -72,8 +73,8 @@ export const ScoreItem = ({ label, score, ratings, url }: { label: string; score
           data-encore-id="text"
           style={{
             textTransform: "uppercase",
-            fontSize: "0.7rem",
             letterSpacing: "0.05rem",
+            fontSize: "0.7rem",
             marginTop: "5px",
             width: "100%",
             opacity: "0.6",

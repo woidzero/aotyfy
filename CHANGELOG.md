@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.4] - 2026-04-13
+
+### Changed
+
+- Improved sidebar card looks
+
 ## [2.1.3] - 2026-04-12
 
 ### Fixed
@@ -8,7 +14,7 @@
 
 ## [2.1.2] - 2026-03-29
 
-### Fixed
+### Changed
 
 - Improved track and disc indexing algorithm
 

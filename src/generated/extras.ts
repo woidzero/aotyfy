@@ -1,13 +1,18 @@
 // auto-generated - DO NOT EDIT
-export const __VERSION__ = '2.1.3';
+export const __VERSION__ = '2.1.4';
 export const __CHANGELOG__ = `
+<h2>[2.1.4] - 2026-04-13</h2><br />
+<h3>Changed</h3><br />
+<ul>
+<li>Improved sidebar card looks</li>
+</ul><br />
 <h2>[2.1.3] - 2026-04-12</h2><br />
 <h3>Fixed</h3><br />
 <ul>
 <li>Fixed z-order for score card in sidebar</li>
 </ul><br />
 <h2>[2.1.2] - 2026-03-29</h2><br />
-<h3>Fixed</h3><br />
+<h3>Changed</h3><br />
 <ul>
 <li>Improved track and disc indexing algorithm</li>
 </ul><br />
