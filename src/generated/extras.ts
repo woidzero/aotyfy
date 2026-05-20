@@ -1,6 +1,12 @@
 // auto-generated - DO NOT EDIT
-export const __VERSION__ = '2.1.4';
+export const __VERSION__ = '2.1.5';
 export const __CHANGELOG__ = `
+<h2>[2.1.5] - 2026-05-20</h2><br />
+<h3>Changed</h3><br />
+<ul>
+<li>Improved logging system</li>
+<li>Replaced JQuery with DOM API for performance and compatibility</li>
+</ul><br />
 <h2>[2.1.4] - 2026-04-13</h2><br />
 <h3>Changed</h3><br />
 <ul>

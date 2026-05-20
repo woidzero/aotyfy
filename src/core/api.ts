@@ -5,11 +5,10 @@ import { Selectors } from "./dom";
 
 import axios from "axios";
 import * as cheerio from "cheerio";
+import log from "./logger";
 
 /**
  * anti-cors proxy
- *
- * TODO: host own instance at woid.world for security and perfomance reasons.
  */
 const PROXY_URL = "https://proxy.life23243.workers.dev/";
 
@@ -199,7 +198,7 @@ async function parse(url: string) {
     Album.tracks = Tracks;
     Album.valid = true;
 
-    console.log(`[aotyfy] api response:`, Album);
+    log.info(`[aotyfy] api response:`, Album);
     return Album;
   } catch (e: any) {
     throw e;
@@ -220,17 +219,21 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
     const cachedAOTYID = Storage[SAID];
     const cachedUrl = `https://www.albumoftheyear.org/album/${cachedAOTYID}.php`;
 
-    console.debug("[aotyfy] cached release", cachedAOTYID);
+    log.debug(`cached release: ${cachedAOTYID}`);
 
     try {
       return await parse(cachedUrl);
     } catch (e) {
       const map = Settings.storage.get();
 
+      if (!map[SAID]) {
+        log.debug(`writing new cache: ${SAID}`)
+      }
+
       delete map[SAID];
       Settings.storage.set(map);
 
-      console.warn("[aotyfy] cached release is broken, removed: ", cachedAOTYID);
+      log.warn(`cached release is broken, removed: ${cachedAOTYID}`);
     }
   }
 
@@ -281,21 +284,21 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
     aotyURL = releases[0].url;
   } else if (releases.length === 1) {
     // single result - use it directly
-    console.debug("[aotyfy] only one release found");
+    log.debug("only one release found");
     aotyURL = releases[0].url;
   } else {
     // multiple results - find best match
-    console.debug(`[aotyfy] multiple results (${releases.length}) found`);
+    log.debug(`multiple results (${releases.length}) found`);
 
     const albumLower = meta.album.title.toLowerCase();
     const artistLower = meta.artist.name.toLowerCase();
 
     // check if first result is exact match (most common case)
     if (releases[0].title.toLowerCase() === albumLower) {
-      console.debug("[AOTYfy] exact match found at first result");
+      log.debug("exact match found at first result");
       aotyURL = releases[0].url;
     } else {
-      console.debug("[AOTYfy] no exact match found at first result, checking similarities...");
+      log.debug("no exact match found at first result, checking similarities...");
 
       // calculate similarities for all releases
       const releasesWithSimilarity = releases.map((release) => ({
@@ -307,7 +310,7 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
       // find the most similar artist
       const mostSimilarByArtist = releasesWithSimilarity.reduce((best, current) => (current.artistSimilarity > best.artistSimilarity ? current : best));
 
-      console.debug(`[AOTYfy] most similar artist: ${mostSimilarByArtist.artist} (${mostSimilarByArtist.artistSimilarity})`);
+      log.debug(`[AOTYfy] most similar artist: ${mostSimilarByArtist.artist} (${mostSimilarByArtist.artistSimilarity})`);
 
       // group releases by artist to handle multiple albums from same artist
       const releasesByArtist = new Map<string, AOTYFY._Release[]>();
@@ -323,12 +326,12 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
       // if artist has multiple albums, find the most similar album
       if (artistReleases.length > 1) {
         const bestAlbumMatch = artistReleases.reduce((best, current) => (current.albumSimilarity! > best.albumSimilarity! ? current : best));
-        console.debug(`[aotyfy] multiple albums from artist, best match: ${bestAlbumMatch.title}`);
+        log.debug(`[aotyfy] multiple albums from artist, best match: ${bestAlbumMatch.title}`);
         aotyURL = bestAlbumMatch.url;
       }
       // single album from most similar artist - check if similarity is sufficient (>30%)
       else if (mostSimilarByArtist.artistSimilarity > 0.3) {
-        console.debug(`[aotyfy] found match with ${mostSimilarByArtist.artistSimilarity} similarity`);
+        log.debug(`[aotyfy] found match with ${mostSimilarByArtist.artistSimilarity} similarity`);
         aotyURL = mostSimilarByArtist.url;
       } else {
         throw new APIError("no sufficient match found (similarity < 0.3)");
@@ -366,9 +369,9 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
       map[SAID] = aotyId;
       Settings.storage.set(map);
 
-      console.debug("[aotyfy] cached release: ", SAID, "->", aotyId);
+      log.debug("cached release: ", SAID, "->", aotyId);
     } else {
-      console.warn(`[aotyfy] can't extract 'aotyId': ${aotyId}`);
+      log.warn(`unable to extract aotyId: ${aotyId}`);
     }
   }
 
@@ -380,7 +383,7 @@ export async function getAPI(meta: AOTYFY._Meta, firstIteration: boolean = true,
  */
 export function getTrack(meta: AOTYFY._Meta, album: AOTYFY._Album): AOTYFY._Track | null {
   if (!album.tracks || album.tracks.length === 0) {
-    console.warn("[aotyfy] release doesn't contain any tracks");
+    log.warn("release doesn't contain any tracks");
     return null;
   }
 

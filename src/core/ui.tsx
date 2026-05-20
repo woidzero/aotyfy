@@ -5,20 +5,20 @@ import { valid } from "./utils";
 
 import { ScoreCard } from "../components/ScoreCard";
 
-import $ from "jquery";
 import { CriticalError } from "./exceptions";
+import log from "./logger";
 
 class Elements {
-  public infoContainer!: JQuery<HTMLElement>;
-  public songTitleBox!: JQuery<HTMLElement>;
-  public playingBar!: JQuery<HTMLElement>;
+  public infoContainer!: HTMLElement;
+  public songTitleBox!: HTMLElement;
+  public playingBar!: HTMLElement;
 
-  public NPWidget!: JQuery<HTMLElement> | null;
+  public NPWidget!: HTMLElement | null;
 
-  public sidebarCardWrapper!: JQuery<HTMLElement>;
-  public albumRatingContainer!: JQuery<HTMLElement>;
-  public albumRating!: JQuery<HTMLElement>;
-  public trackRating!: JQuery<HTMLElement>;
+  public sidebarCardWrapper!: HTMLDivElement;
+  public albumRatingContainer!: HTMLDivElement;
+  public albumRating!: HTMLAnchorElement;
+  public trackRating!: HTMLAnchorElement;
 
   async create(): Promise<void> {
     const [infoContainer, playingBar, songTitleBox, NPWidget] = await Promise.all([
@@ -37,25 +37,34 @@ class Elements {
     this.NPWidget = NPWidget;
 
     // sidebar wrapper
-    this.sidebarCardWrapper = $("<div class='aotyfy-SidebarCardWrapper'></div>").css({
-      "z-index": 9999
-    });
+    this.sidebarCardWrapper = document.createElement("div");
+    this.sidebarCardWrapper.className = "aotyfy-SidebarCardWrapper";
+    this.sidebarCardWrapper.style.zIndex = "9999";
+
+    // album rating
+    this.albumRating = document.createElement("a");
+    this.albumRating.className = "aotyfy-AlbumRating";
+    this.albumRating.style.fontSize = "12px";
+    this.albumRating.style.color = "var(--spice-extratext)";
 
     // album rating container
-    this.albumRating = $("<a class='aotyfy-AlbumRating'></a>").css({
-      "font-size": "12px",
-      color: "var(--spice-extratext)",
-    });
+    this.albumRatingContainer = document.createElement("div");
+    this.albumRatingContainer.className = "aotyfy-AlbumRatingContainer";
+    this.albumRatingContainer.style.gridArea = "rating";
+    this.albumRatingContainer.append(this.albumRating);
 
-    this.albumRatingContainer = $("<div class='aotyfy-AlbumRatingContainer'></div>").css({ "grid-area": "rating" }).append(this.albumRating);
+    this.infoContainer = infoContainer;
+    this.infoContainer.style.gridTemplate =
+      `"title title" "badges subtitle" "rating rating" "quality quality" "genres genres" / auto 1fr auto auto`;
 
-    this.infoContainer = infoContainer.css("grid-template", `"title title" "badges subtitle" "rating rating" "quality quality" "genres genres" / auto 1fr auto auto`).append(this.albumRatingContainer);
+    this.infoContainer.append(this.albumRatingContainer);
 
-    this.trackRating = $("<a class='aotyfy-TrackRating'></a>").css({
-      "font-size": "10px",
-      "font-weight": "bold",
-      "padding-left": "5px",
-    });
+    // track rating
+    this.trackRating = document.createElement("a");
+    this.trackRating.className = "aotyfy-TrackRating";
+    this.trackRating.style.fontSize = "10px";
+    this.trackRating.style.fontWeight = "bold";
+    this.trackRating.style.paddingLeft = "5px";
   }
 }
 
@@ -71,7 +80,7 @@ export class UI {
    * by observing the removal of the current song title node
    */
   async waitForRerender(): Promise<void> {
-    const oldNode = $(Selectors.SONG_TITLE_BOX)[0];
+    const oldNode = document.querySelector(Selectors.SONG_TITLE_BOX);
 
     return new Promise<void>((resolve) => {
       if (!oldNode) {
@@ -87,6 +96,7 @@ export class UI {
       });
 
       observer.observe(document.body, { childList: true, subtree: true });
+
       setTimeout(() => {
         observer.disconnect();
         resolve();
@@ -98,29 +108,30 @@ export class UI {
    * update track in Now Playing Bar
    */
   updateTrack(Track: AOTYFY._Track) {
-    this.el.trackRating.detach();
-    this.el.trackRating.show();
+    this.el.trackRating.remove();
+    this.el.trackRating.style.display = "";
 
     if (!valid(Track.score)) {
-      console.warn("[aotyfy] track score is invalid");
-      this.el.trackRating.hide();
+      log.warn("track score is invalid");
+      this.el.trackRating.style.display = "none";
       return;
     }
 
-    const songTitleBox = $(Selectors.SONG_TITLE_BOX);
+    const songTitleBox = document.querySelector<HTMLElement>(Selectors.SONG_TITLE_BOX);
 
-    if (!songTitleBox.length) {
-      console.warn("[aotyfy] unable to find song title box");
+    if (!songTitleBox) {
+      log.warn("unable to find song title box");
       return;
     }
 
     this.el.songTitleBox = songTitleBox;
-    this.el.trackRating
-      .text(`[${Track.score.toFixed(0)}]`)
-      .attr("title", `${Track.ratings} ratings`)
-      .attr("href", Track.url);
+
+    this.el.trackRating.textContent = `[${Track.score.toFixed(0)}]`;
+    this.el.trackRating.title = `${Track.ratings} ratings`;
+    this.el.trackRating.href = Track.url;
 
     setAppearance(Track.score, this.el.trackRating);
+
     this.el.songTitleBox.append(this.el.trackRating);
   }
 
@@ -128,15 +139,20 @@ export class UI {
    * update album in Now Playing Bar
    */
   updateAlbum(Album: AOTYFY._Album) {
-    this.el.albumRatingContainer.show();
+    this.el.albumRatingContainer.style.display = "";
 
     if (!valid(Album.ratings.user.ratings)) {
-      this.el.albumRating.text("No ratings").attr("href", "#");
-      console.warn("[aotyfy] no ratings for this release");
+      this.el.albumRating.textContent = "No ratings";
+      this.el.albumRating.href = "#";
+
+      log.warn("no ratings for this release");
       return;
     }
 
-    this.el.albumRating.text(`${Album.ratings.user.score} (${Album.ratings.user.ratings} ratings)`).attr("href", Album.url);
+    this.el.albumRating.textContent =
+      `${Album.ratings.user.score} (${Album.ratings.user.ratings} ratings)`;
+
+    this.el.albumRating.href = Album.url;
 
     setAppearance(Album.ratings.user.score, this.el.albumRating);
   }
@@ -145,19 +161,20 @@ export class UI {
    * update sidebar
    */
   updateSidebar(Album: AOTYFY._Album) {
-    this.el.sidebarCardWrapper.show();
+    this.el.sidebarCardWrapper.style.display = "";
 
     if (!this.el.sidebarCardWrapper || !this.el.NPWidget) {
-      console.warn("[aotyfy] unable to obtain sidebar");
+      log.warn("unable to obtain sidebar");
       return;
     }
 
-    if (document.body.contains(this.el.sidebarCardWrapper[0])) {
-      console.info("[aotyfy] document contains widget, updating");
-      ReactDOM.unmountComponentAtNode(this.el.sidebarCardWrapper[0]);
+    if (document.body.contains(this.el.sidebarCardWrapper)) {
+      log.info("document contains widget, updating");
+      ReactDOM.unmountComponentAtNode(this.el.sidebarCardWrapper);
     }
 
-    this.el.NPWidget.after(this.el.sidebarCardWrapper).css({ "margin-bottom": "0" });
+    this.el.NPWidget.insertAdjacentElement("afterend", this.el.sidebarCardWrapper);
+    this.el.NPWidget.style.marginBottom = "0";
 
     const ScoreItem = (data: { score: number; ratings: number }): AOTYFY._ScoreItem => ({
       score: data.score,
@@ -172,22 +189,22 @@ export class UI {
           user: ScoreItem(Album.ratings.user),
         }}
       />,
-      this.el.sidebarCardWrapper[0],
+      this.el.sidebarCardWrapper,
     );
   }
 
   hideNBP() {
-    this.el.trackRating.hide();
-    this.el.albumRatingContainer.hide();
+    this.el.trackRating.style.display = "none";
+    this.el.albumRatingContainer.style.display = "none";
   }
 
   hideSidebar() {
-    this.el.sidebarCardWrapper.hide();
+    this.el.sidebarCardWrapper.style.display = "none";
   }
 
   hide() {
-    this.el.trackRating.hide();
-    this.el.albumRatingContainer.hide();
-    this.el.sidebarCardWrapper.hide();
+    this.el.trackRating.style.display = "none";
+    this.el.albumRatingContainer.style.display = "none";
+    this.el.sidebarCardWrapper.style.display = "none";
   }
 }

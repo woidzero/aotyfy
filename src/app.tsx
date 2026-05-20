@@ -8,6 +8,7 @@ import { getAPI, getTrack } from "./core/api";
 import { getMeta } from "./core/metadata";
 import { Settings } from "./core/settings";
 import { showChangelog } from "./core/utils";
+import log from "./core/logger";
 
 const { Player } = Spicetify;
 
@@ -50,10 +51,10 @@ async function refresh() {
   State.prev.track = null;
 
   await update(true).then(() => {
-    Spicetify.showNotification("[aotyfy] Scores refreshed", false);
+    Spicetify.showNotification("[aotyfy] scores refreshed");
   });
 
-  console.info("[aotyfy] scores refreshed");
+  log.info("scores refreshed");
 }
 
 /**
@@ -79,7 +80,7 @@ async function update(force: boolean = true) {
 
     // fetch
     const Meta: AOTYFY._Meta = getMeta(data);
-    console.debug("[aotyfy] fetched meta", Meta);
+    log.debug("fetched meta", Meta);
 
     // globals
     let Album: AOTYFY._Album;
@@ -91,13 +92,13 @@ async function update(force: boolean = true) {
 
     if (State.cache.uri === cacheKey && !force && State.cache.album) {
       Album = State.cache.album;
-      console.debug("[aotyfy] cache", Album);
+      log.debug("cache: ", Album);
     } else {
       try {
         Album = await getAPI(Meta, true, force);
 
         if (!Album.valid && Settings.strict.value) {
-          console.debug("[aotyfy] unable to find, trying again ...");
+          log.debug("unable to find, trying again ...");
           Album = await getAPI(Meta, false);
         }
 
@@ -113,13 +114,13 @@ async function update(force: boolean = true) {
     }
 
     if (Settings.showNPB.value) {
-      console.debug("[aotyfy] showing npb");
+      log.debug("showing npb");
       ui.updateAlbum(Album);
 
       const Track = getTrack(Meta, Album);
 
       if (Track) {
-        console.debug("[aotyfy] showing track npb");
+        log.debug("[aotyfy] showing track npb");
         ui.updateTrack(Track);
       }
     } else {
@@ -127,7 +128,7 @@ async function update(force: boolean = true) {
     }
 
     if (Settings.showSidebar.value) {
-      console.debug("[aotyfy] showing sidebar");
+      log.debug("[aotyfy] showing sidebar");
       ui.updateSidebar(Album);
     } else {
       ui.hideSidebar();
@@ -137,7 +138,7 @@ async function update(force: boolean = true) {
     throw new CriticalError(`updating failed: ${e.message}`);
   } finally {
     State.lock = false;
-    console.info("[aotyfy] scores updated");
+    log.info("[aotyfy] scores updated");
   }
 }
 
@@ -190,7 +191,7 @@ export default async function main() {
     if (!Settings.isEnabled.value) return;
     await ui!.waitForRerender();
     await update(false).catch((e) => {
-      console.error("[aotyfy] songchange update failed:", e);
+      log.error("songchange update failed:", e);
     });
   });
 

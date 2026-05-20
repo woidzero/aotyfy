@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.5] - 2026-05-20
+
+### Changed
+
+- Improved logging system
+- Replaced JQuery with DOM API for performance and compatibility
+
 ## [2.1.4] - 2026-04-13
 
 ### Changed

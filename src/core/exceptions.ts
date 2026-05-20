@@ -18,10 +18,6 @@ export class AOTYFYError extends Error {
     if (Settings.notifications.value && opts.show) {
       showNotification(`[aotyfy] ` + message, true);
     }
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, AOTYFYError);
-    }
   }
 }
 

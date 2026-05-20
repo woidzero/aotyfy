@@ -26,7 +26,7 @@ export function getMeta(data: Record<string, any>): AOTYFY._Meta {
     skipSimcheck: false,
   };
 
-  const IGNORE_ARTISTS = ["Weezer", "SOPHIE", "Crystal Castles", "underscores", "Ninajirachi", "slayr"];
+  const IGNORE_ARTISTS = ["Weezer", "SOPHIE", "Crystal Castles", "underscores", "Ninajirachi", "slayr", "Alyx Trick"];
 
   if (!IGNORE_ARTISTS.includes(Meta.artist.name)) {
     Meta.album.title = Meta.album.title.split(" -")[0];
@@ -44,6 +44,10 @@ export function getMeta(data: Record<string, any>): AOTYFY._Meta {
 
   if (Meta.artist.name === "M.I.A." && Meta.album.title.startsWith("/\\/\\ /\\ Y /\\")) {
     Meta.album.title = "ΛΛ Λ Y Λ";
+  }
+
+  if (Meta.artist.name.startsWith("Arca") && Meta.album.title.startsWith("Entrañas")) {
+    Meta.artist.name = "Arca";
   }
 
   // fix by album uri

@@ -1,6 +1,3 @@
-// TODO: get rid of jquery
-import $ from "jquery";
-
 /**
  * selectors
  */
@@ -9,7 +6,7 @@ export const Selectors = {
   NOW_PLAYING_WIDGET: ".main-nowPlayingView-nowPlayingWidget",
   SONG_TITLE_BOX:
     "#main > div > div.Root__top-container > div.Root__now-playing-bar > aside > div > div.main-nowPlayingBar-left > div > div.main-nowPlayingWidget-trackInfo.main-trackInfo-container > div.main-trackInfo-name > div > span > span > div > span",
-  INFO_CONTAINER: ".main-nowPlayingWidget-trackInfo.main-trackInfo-container",
+  INFO_CONTAINER: ".main-nowPlayingWidget-trackInfo",
   PLAYING_BAR: "div.Root__now-playing-bar > aside > div",
 
   // aoty selectors
@@ -34,14 +31,14 @@ export const Selectors = {
  *
  * @returns the color string if no element provided, the modified element if so
  */
-export function setAppearance(score: number | string, element?: JQuery): string | JQuery {
+export function setAppearance(score: number | string, el?: HTMLElement): string | HTMLElement {
   const value = Number(score);
   let color = "var(--text-subdued)";
 
   if (value === -1 || !Number.isFinite(value)) {
-    if (element) {
-      element.css({ color: color });
-      return element;
+    if (el) {
+      el.style.color = color;
+      return el;
     }
     return color;
   }
@@ -50,9 +47,9 @@ export function setAppearance(score: number | string, element?: JQuery): string 
   else if (value >= 49.5) color = "#f0e68c";
   else color = "#d76666";
 
-  if (element) {
-    element.css({ color: color });
-    return element;
+  if (el) {
+    el.style.color = color;
+    return el;
   }
 
   return color;
@@ -67,14 +64,14 @@ export function setAppearance(score: number | string, element?: JQuery): string 
  *
  * @returns promise that resolves with the matching element once it appears
  */
-export function waitElement(selector: string | string[], timeout: number = 5000): Promise<JQuery<HTMLElement>> {
+export function waitElement(selector: string | string[], timeout: number = 5000): Promise<HTMLElement> {
   return new Promise((resolve, reject) => {
     const selectorStr = Array.isArray(selector) ? selector.join(",") : selector;
 
     const el = document.querySelector<HTMLElement>(selectorStr);
 
     if (el) {
-      resolve($(el));
+      resolve(el);
       return;
     }
 
@@ -84,7 +81,7 @@ export function waitElement(selector: string | string[], timeout: number = 5000)
       if (el) {
         clearTimeout(timer);
         observer.disconnect();
-        resolve($(el));
+        resolve(el);
         return;
       }
     });
